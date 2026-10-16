@@ -1,5 +1,5 @@
-// Bei jedem Update die Versionsnummer erhöhen (z. B. pole-10.26.2)
-const CACHE = "pole-10.26.1";
+// Bei jedem Update die Versionsnummer erhöhen (z. B. pole-10.26.3 → pole-10.26.4)
+const CACHE = "pole-10.26.3";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {

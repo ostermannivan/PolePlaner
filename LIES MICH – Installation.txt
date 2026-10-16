@@ -21,5 +21,5 @@ Wichtig
 
 Updates
 · Neue index.html auf GitHub hochladen (alte Datei ersetzen).
-· In sw.js die Versionsnummer erhöhen, z. B. pole-10.26.1 → pole-10.26.2.
+· In sw.js die Versionsnummer erhöhen, z. B. pole-10.26.3 → pole-10.26.4.
 · Beim nächsten Öffnen mit Internet lädt die App die neue Version. Die Daten bleiben erhalten.
