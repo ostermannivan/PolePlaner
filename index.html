@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pole-Repertoire</title>
+<meta name="theme-color" content="#A3214F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pole">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEEF3; --surface:#FFFFFF; --surface-2:#F5F6F9; --ink:#241A2F; --muted:#675F72; --line:#D8DBE3;
+  --accent:#A3214F; --accent-ink:#FFFFFF; --accent-soft:#F6E3EA;
+  --easy:#1F7F6E; --mid:#B9700C; --hard:#A3214F;
+  --chrome-a:#B9BEC9; --chrome-b:#FFFFFF; --chrome-c:#8E95A3;
+  --shadow:0 1px 2px rgba(36,26,47,.08), 0 6px 18px rgba(36,26,47,.06);
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16121B; --surface:#211B28; --surface-2:#2A2332; --ink:#F2EDF5; --muted:#A99FB3; --line:#3A3243;
+    --accent:#E2608D; --accent-ink:#1A0F14; --accent-soft:#3A2030;
+    --easy:#4FBFA9; --mid:#E5A84A; --hard:#E2608D;
+    --chrome-a:#5B6170; --chrome-b:#C9CED8; --chrome-c:#41464F;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16121B; --surface:#211B28; --surface-2:#2A2332; --ink:#F2EDF5; --muted:#A99FB3; --line:#3A3243;
+  --accent:#E2608D; --accent-ink:#1A0F14; --accent-soft:#3A2030;
+  --easy:#4FBFA9; --mid:#E5A84A; --hard:#E2608D;
+  --chrome-a:#5B6170; --chrome-b:#C9CED8; --chrome-c:#41464F;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* Kopf */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-inner{max-width:1240px;margin:0 auto;padding:.8rem 1.1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.6rem;margin-right:auto}
+.brand .pole{width:6px;height:34px;border-radius:3px;background:linear-gradient(90deg,var(--chrome-c),var(--chrome-b) 45%,var(--chrome-a))}
+.brand h1{font-family:var(--display);font-weight:800;font-size:1.35rem;letter-spacing:-.01em;margin:0;line-height:1}
+.tabs{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabs button{border:0;background:none;padding:.42rem 1rem;border-radius:999px;font-weight:600;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--surface)}
+
+main{max-width:1240px;margin:0 auto;padding:1.1rem 1.1rem 6rem}
+
+/* Werkzeugleiste */
+.toolbar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-bottom:1.1rem}
+.search{flex:1 1 220px;position:relative}
+.search input{width:100%;padding:.62rem .9rem .62rem 2.3rem;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.search svg{position:absolute;left:.75rem;top:50%;translate:0 -50%;color:var(--muted)}
+.chips{display:flex;gap:.35rem;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);padding:.4rem .8rem;border-radius:999px;font-weight:600;font-size:.9rem;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--surface)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:.58rem 1rem;border-radius:12px;font-weight:600;display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:none;border-color:transparent}
+.btn.danger{color:var(--hard);border-color:var(--line)}
+.btn.small{padding:.35rem .7rem;font-size:.9rem;border-radius:10px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+/* Stufen-Markierung: drei Griffpunkte an einer Stange */
+.lvl{display:inline-flex;flex-direction:column-reverse;align-items:center;gap:3px;padding:3px 0;position:relative;width:12px}
+.lvl::before{content:"";position:absolute;inset:0 auto 0 50%;width:2px;translate:-1px 0;background:var(--line);border-radius:1px}
+.lvl i{position:relative;width:8px;height:8px;border-radius:50%;background:var(--surface);border:2px solid var(--line)}
+.lvl i.f{background:var(--c);border-color:var(--c)}
+
+/* Repertoire-Spalten */
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.1rem;align-items:start}
+.board.single{grid-template-columns:minmax(0,1fr)}
+.col{position:relative;padding-left:18px}
+.col::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:3px;background:linear-gradient(90deg,var(--chrome-c),var(--chrome-b) 45%,var(--chrome-a))}
+.col-head{display:flex;align-items:center;gap:.6rem;margin:0 0 .8rem}
+.col-head h2{font-family:var(--display);font-weight:700;font-size:1.3rem;margin:0;color:var(--c)}
+.col-head .count{color:var(--muted);font-weight:600;font-size:.95rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.75rem}
+.board.single .cards{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.empty-col{border:1.5px dashed var(--line);border-radius:14px;padding:1rem;color:var(--muted);font-size:.92rem}
+
+.card{position:relative;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:0;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.card .ph{aspect-ratio:4/5;background:var(--surface-2);display:grid;place-items:center;overflow:hidden}
+.card .ph img{width:100%;height:100%;object-fit:cover}
+.ph .ini{font-family:var(--display);font-weight:800;font-size:2.2rem;color:var(--c);opacity:.55}
+.card .body{padding:.55rem .7rem .7rem}
+.card .nm{font-weight:700;line-height:1.25}
+.card .nt{margin:.25rem 0 0;color:var(--muted);font-size:.84rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.kind{display:inline-block;font-size:.75rem;font-weight:700;padding:.08rem .45rem;border-radius:6px;background:var(--surface-2);color:var(--muted);margin-top:.25rem}
+.card .check{position:absolute;top:.5rem;right:.5rem;width:28px;height:28px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.25);display:none;place-items:center;color:#fff}
+.selecting .card .check{display:grid}
+.card.sel{outline:3px solid var(--accent);outline-offset:-1px}
+.card.sel .check{background:var(--accent);border-color:var(--accent)}
+
+/* Auswahlleiste */
+.selbar{position:fixed;left:50%;translate:-50% 0;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:6;background:var(--ink);color:var(--surface);border-radius:16px;padding:.6rem .6rem .6rem 1rem;display:flex;align-items:center;gap:.8rem;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100% - 2rem)}
+.selbar .btn{border-color:transparent}
+.selbar .btn.ghost{color:var(--surface)}
+
+/* Training */
+.train-head{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-bottom:1rem}
+.train-head h2{font-family:var(--display);font-size:1.5rem;margin:0 auto 0 0}
+.month{font-family:var(--display);font-weight:700;color:var(--muted);font-size:1.05rem;margin:1.4rem 0 .5rem}
+.sess{width:100%;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:1rem;align-items:center;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:.75rem;margin-bottom:.6rem;box-shadow:var(--shadow)}
+.date{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;background:var(--surface-2);padding:.35rem 0;line-height:1.1}
+.date b{font-family:var(--display);font-size:1.6rem;font-weight:800}
+.date span{font-size:.78rem;color:var(--muted);font-weight:600}
+.sess.today .date{background:var(--accent);color:var(--accent-ink)}
+.sess.today .date span{color:var(--accent-ink)}
+.sess .course{font-weight:700;font-size:1.05rem}
+.sess .sub{color:var(--muted);font-size:.88rem}
+.thumbs{display:flex}
+.thumbs .t{width:38px;height:38px;border-radius:50%;border:2px solid var(--surface);background:var(--surface-2);overflow:hidden;margin-left:-10px;display:grid;place-items:center;font-weight:800;font-size:.8rem;color:var(--muted)}
+.thumbs .t:first-child{margin-left:0}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+details.past{margin-top:1.6rem}
+details.past summary{cursor:pointer;font-weight:600;color:var(--muted)}
+.empty{border:1.5px dashed var(--line);border-radius:16px;padding:2rem 1.2rem;text-align:center;color:var(--muted)}
+.empty p{max-width:42ch;margin:.3rem auto 1rem}
+
+/* Dialoge */
+dialog{border:0;padding:0;border-radius:18px;background:var(--surface);color:var(--ink);width:min(640px,calc(100% - 1.5rem));max-height:calc(100% - 2rem);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(22,18,27,.5)}
+.dlg{display:flex;flex-direction:column;max-height:calc(100vh - 2rem)}
+.dlg-head{display:flex;align-items:center;gap:.6rem;padding:1rem 1.1rem;border-bottom:1px solid var(--line)}
+.dlg-head h3{font-family:var(--display);font-size:1.25rem;margin:0 auto 0 0;line-height:1.2}
+.dlg-body{padding:1rem 1.1rem;overflow:auto}
+.dlg-foot{display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap;padding:.8rem 1.1rem;border-top:1px solid var(--line)}
+.dlg-foot .left{margin-right:auto}
+.x{border:0;background:var(--surface-2);width:36px;height:36px;border-radius:50%;font-size:1.2rem;line-height:1}
+@media (max-width:600px){
+  dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:18px 18px 0 0;max-height:94%}
+  .dlg{max-height:94vh}
+  .dlg-foot{padding-bottom:calc(.8rem + env(safe-area-inset-bottom,0px))}
+}
+label.f{display:block;font-weight:600;margin:0 0 .9rem}
+label.f > span{display:block;margin-bottom:.3rem}
+.f input[type=text],.f input[type=date],.f textarea,.f select{width:100%;padding:.6rem .75rem;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-weight:400}
+.f textarea{min-height:110px;resize:vertical}
+.hint{color:var(--muted);font-size:.85rem;font-weight:400}
+.seg{display:flex;gap:.4rem;flex-wrap:wrap}
+.seg label{flex:1 1 90px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:flex;align-items:center;justify-content:center;gap:.45rem;border:1.5px solid var(--line);border-radius:10px;padding:.5rem;font-weight:600;cursor:pointer}
+.seg input:checked + span{border-color:var(--c,var(--ink));background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--c,var(--ink))}
+.seg input:focus-visible + span{outline:3px solid var(--accent);outline-offset:2px}
+.photo-pick{display:grid;grid-template-columns:120px 1fr;gap:1rem;align-items:center;margin-bottom:1rem}
+.photo-pick .prev{aspect-ratio:4/5;border-radius:12px;background:var(--surface-2);border:1px dashed var(--line);overflow:hidden;display:grid;place-items:center;color:var(--muted);font-size:.8rem;text-align:center}
+.photo-pick .prev img{width:100%;height:100%;object-fit:cover}
+.photo-pick .acts{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+.fig-view .big{border-radius:14px;overflow:hidden;background:var(--surface-2);max-height:60vh;display:grid;place-items:center}
+.fig-view .big img{max-height:60vh;width:auto;object-fit:contain}
+.fig-view .meta{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 .4rem;font-weight:600}
+.notes{white-space:pre-wrap;background:var(--surface-2);border-radius:12px;padding:.8rem .9rem;margin:.5rem 0}
+.used{color:var(--muted);font-size:.9rem}
+.used a{color:inherit}
+
+.plan-list{list-style:none;margin:0;padding:0;counter-reset:n}
+.plan-item{display:grid;grid-template-columns:28px 92px minmax(0,1fr) auto;gap:.8rem;align-items:start;padding:.8rem 0;border-bottom:1px solid var(--line);counter-increment:n}
+.plan-item::before{content:counter(n);font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--muted);text-align:center;padding-top:.2rem}
+.plan-item .pimg{aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--surface-2);display:grid;place-items:center;border:0;padding:0}
+.plan-item .pimg img{width:100%;height:100%;object-fit:cover}
+.plan-item .pname{font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:.5rem}
+.plan-item .pnotes{color:var(--muted);font-size:.9rem;white-space:pre-wrap;margin-top:.2rem}
+.plan-item .pact{display:flex;flex-direction:column;gap:.25rem}
+.icon{border:1px solid var(--line);background:var(--surface);width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:1rem;line-height:1}
+.icon[disabled]{opacity:.3}
+@media (max-width:520px){ .plan-item{grid-template-columns:22px 70px minmax(0,1fr)} .plan-item .pact{grid-column:2 / -1;flex-direction:row} }
+.sess-note{background:var(--accent-soft);border-radius:12px;padding:.7rem .9rem;margin-bottom:.8rem;white-space:pre-wrap}
+
+.pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.6rem;margin-top:.8rem}
+.pick-grid .card .check{display:grid}
+.radio-list{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+.radio-list label{display:flex;gap:.7rem;align-items:center;border:1.5px solid var(--line);border-radius:12px;padding:.6rem .8rem;cursor:pointer}
+.radio-list label:has(input:checked){border-color:var(--accent)}
+.radio-list small{color:var(--muted);display:block}
+
+footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--muted);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+footer.foot .sp{margin-right:auto}
+.toast{position:fixed;left:50%;top:calc(1rem + env(safe-area-inset-top,0px));translate:-50% 0;background:var(--ink);color:var(--surface);padding:.6rem 1rem;border-radius:12px;z-index:20;font-weight:600;max-width:calc(100% - 2rem);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.loading{padding:3rem 1rem;text-align:center;color:var(--muted)}
+
+@media (max-width:860px){ .board{grid-template-columns:minmax(0,1fr)} .cards{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand"><div class="pole" aria-hidden="true"></div><h1>Pole-Repertoire</h1></div>
+    <nav class="tabs" role="tablist" aria-label="Bereiche">
+      <button role="tab" id="tab-rep" aria-selected="true" data-action="tab" data-tab="rep">Repertoire</button>
+      <button role="tab" id="tab-train" aria-selected="false" data-action="tab" data-tab="train">Trainingsplanung</button>
+    </nav>
+  </div>
+</header>
+
+<main id="app"><div class="loading">Repertoire wird geladen …</div></main>
+<footer class="foot">
+  <span class="sp"><span id="storeInfo"></span> Version <span id="appVersion">10.26.1</span></span>
+  <button class="btn small ghost" data-action="export">Sicherung exportieren</button>
+  <label class="btn small ghost filebtn">Sicherung importieren<input type="file" accept="application/json,.json" id="importFile"></label>
+</footer>
+<div id="selbarHost"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Figur ansehen -->
+<dialog id="dlgFigView"><div class="dlg">
+  <div class="dlg-head"><h3 id="fvTitle"></h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-body fig-view" id="fvBody"></div>
+  <div class="dlg-foot">
+    <button class="btn" data-action="fv-plan">Zu Training hinzufügen</button>
+    <button class="btn primary" data-action="fv-edit">Bearbeiten</button>
+  </div>
+</div></dialog>
+
+<!-- Figur bearbeiten -->
+<dialog id="dlgFigForm"><form method="dialog" class="dlg" id="figForm" novalidate>
+  <div class="dlg-head"><h3 id="ffTitle">Neue Figur</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-body">
+    <div class="photo-pick">
+      <div class="prev" id="ffPrev">Noch kein Foto</div>
+      <div class="acts">
+        <label class="btn filebtn">Foto auswählen<input type="file" accept="image/*" id="ffPhoto"></label>
+        <button type="button" class="btn small ghost" id="ffPhotoRemove" hidden>Foto entfernen</button>
+        <span class="hint">Aus der Galerie oder direkt mit der Kamera.</span>
+      </div>
+    </div>
+    <label class="f"><span>Name</span><input type="text" id="ffName" required autocomplete="off" placeholder="z. B. Fireman Spin"></label>
+    <div class="f" style="margin-bottom:.9rem"><span style="display:block;font-weight:600;margin-bottom:.3rem">Art</span>
+      <div class="seg" id="ffKind">
+        <label><input type="radio" name="kind" value="Figur" checked><span>Figur</span></label>
+        <label><input type="radio" name="kind" value="Spin"><span>Spin</span></label>
+      </div>
+    </div>
+    <div class="f" style="margin-bottom:.9rem"><span style="display:block;font-weight:600;margin-bottom:.3rem">Schwierigkeit</span>
+      <div class="seg" id="ffLevel"></div>
+    </div>
+    <label class="f"><span>Notizen</span><textarea id="ffNotes" placeholder="z. B. wie man in den Trick hineinkommt, Griffe, häufige Fehler, Hilfestellung"></textarea></label>
+    <p class="hint" id="ffErr" style="color:var(--hard)" hidden></p>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn danger left" id="ffDelete" hidden>Löschen</button>
+    <button type="button" class="btn" data-action="close">Abbrechen</button>
+    <button type="submit" class="btn primary" id="ffSave">Speichern</button>
+  </div>
+</form></dialog>
+
+<!-- Training ansehen -->
+<dialog id="dlgSess"><div class="dlg">
+  <div class="dlg-head"><h3 id="sdTitle"></h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-body" id="sdBody"></div>
+  <div class="dlg-foot">
+    <button class="btn danger left" data-action="sd-delete">Training löschen</button>
+    <button class="btn" data-action="sd-edit">Datum/Kurs ändern</button>
+    <button class="btn primary" data-action="sd-add">Figuren hinzufügen</button>
+  </div>
+</div></dialog>
+
+<!-- Training anlegen/ändern -->
+<dialog id="dlgSessForm"><form method="dialog" class="dlg" id="sessForm" novalidate>
+  <div class="dlg-head"><h3 id="sfTitle">Training planen</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-body">
+    <label class="f"><span>Datum</span><input type="date" id="sfDate" required></label>
+    <label class="f"><span>Kurs</span><input type="text" id="sfCourse" list="courseList" required autocomplete="off" placeholder="z. B. Anfängerkurs"></label>
+    <datalist id="courseList"></datalist>
+    <label class="f"><span>Notiz zum Training <span class="hint">(optional)</span></span><textarea id="sfNote" style="min-height:70px" placeholder="z. B. Aufwärmen mit Schulterfokus"></textarea></label>
+    <p class="hint" id="sfErr" style="color:var(--hard)" hidden></p>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn" data-action="close">Abbrechen</button>
+    <button type="submit" class="btn primary" id="sfSave">Speichern</button>
+  </div>
+</form></dialog>
+
+<!-- Figuren auswählen (für ein Training) -->
+<dialog id="dlgPick"><div class="dlg">
+  <div class="dlg-head"><h3>Figuren hinzufügen</h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-body">
+    <div class="toolbar" style="margin:0">
+      <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" id="pkQ" placeholder="Figur suchen" aria-label="Figur suchen"></div>
+      <div class="chips" id="pkLevels"></div>
+    </div>
+    <div class="pick-grid" id="pkGrid"></div>
+  </div>
+  <div class="dlg-foot">
+    <button class="btn" data-action="close">Abbrechen</button>
+    <button class="btn primary" id="pkOk" data-action="pk-ok">Übernehmen</button>
+  </div>
+</div></dialog>
+
+<!-- Auswahl einem Training zuordnen -->
+<dialog id="dlgAssign"><form method="dialog" class="dlg" id="assignForm" novalidate>
+  <div class="dlg-head"><h3 id="asTitle">Zu Training hinzufügen</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-body">
+    <div class="radio-list" id="asList"></div>
+    <div id="asNew">
+      <label class="f"><span>Datum</span><input type="date" id="asDate"></label>
+      <label class="f"><span>Kurs</span><input type="text" id="asCourse" list="courseList" autocomplete="off" placeholder="z. B. Anfängerkurs"></label>
+    </div>
+    <p class="hint" id="asErr" style="color:var(--hard)" hidden></p>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn" data-action="close">Abbrechen</button>
+    <button type="submit" class="btn primary">Hinzufügen</button>
+  </div>
+</form></dialog>
+
+<!-- Bestätigen -->
+<dialog id="dlgConfirm"><div class="dlg">
+  <div class="dlg-head"><h3 id="cfTitle">Wirklich löschen?</h3></div>
+  <div class="dlg-body"><p id="cfText" style="margin:0"></p></div>
+  <div class="dlg-foot">
+    <button class="btn" id="cfNo">Abbrechen</button>
+    <button class="btn primary" id="cfYes">Löschen</button>
+  </div>
+</div></dialog>
+
+<script>
+(() => {
+"use strict";
+
+/* ---------- Grunddaten ---------- */
+const LEVELS = [
+  {id:"leicht", label:"Leicht", n:1, c:"var(--easy)"},
+  {id:"mittel", label:"Mittel", n:2, c:"var(--mid)"},
+  {id:"schwer", label:"Schwer", n:3, c:"var(--hard)"}
+];
+const LV = Object.fromEntries(LEVELS.map(l => [l.id, l]));
+const DEFAULT_COURSES = ["Anfängerkurs", "Mittelstufe", "Fortgeschrittene"];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const lvlMark = id => { const l = LV[id] || LEVELS[0]; return `<span class="lvl" style="--c:${l.c}" aria-hidden="true">${[1,2,3].map(i => `<i class="${i <= l.n ? "f" : ""}"></i>`).join("")}</span>`; };
+const initials = name => esc((name || "?").trim().split(/\s+/).slice(0,2).map(w => w[0]).join("").toUpperCase());
+const todayISO = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const dateObj = iso => new Date(iso + "T12:00:00");
+const fmtLong = iso => dateObj(iso).toLocaleDateString("de-DE", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+const fmtMonth = iso => dateObj(iso).toLocaleDateString("de-DE", {month:"long", year:"numeric"});
+const fmtShort = iso => dateObj(iso).toLocaleDateString("de-DE", {weekday:"short", day:"numeric", month:"short"});
+
+let toastT;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600); }
+
+/* ---------- Speicher ---------- */
+const Store = {
+  mode: "local", writable: true, figures: new Map(), sessions: new Map(),
+  db: null, idb: null, downloads: null, onChange: () => {},
+
+  async init(){
+    let db = null, user = null;
+    if (window.claude && typeof window.claude.use === "function"){
+      try { db = await window.claude.use("db"); } catch(e){ db = null; }
+      if (db){
+        try { user = await window.claude.use("user"); } catch(e){}
+        try { this.downloads = await window.claude.use("downloads"); } catch(e){}
+      }
+    }
+    if (db){
+      this.mode = "cloud"; this.db = db;
+      if (user){ try { const c = await user.can("data.write"); if (c === false) this.writable = false; } catch(e){} }
+      await new Promise(resolve => {
+        let got = 0; const done = () => { if (++got === 2) resolve(); };
+        let f1 = false, f2 = false;
+        db.collection("figures").onSnapshot(s => {
+          this.figures = new Map(s.docs.map(d => [d.id, {...d.data(), id:d.id}]));
+          if (!f1){ f1 = true; done(); } else this.onChange();
+        }, () => { if (!f1){ f1 = true; done(); } });
+        db.collection("sessions").onSnapshot(s => {
+          this.sessions = new Map(s.docs.map(d => [d.id, {...d.data(), id:d.id}]));
+          if (!f2){ f2 = true; done(); } else this.onChange();
+        }, () => { if (!f2){ f2 = true; done(); } });
+        setTimeout(resolve, 8000);
+      });
+    } else {
+      this.mode = "local";
+      try {
+        this.idb = await new Promise((res, rej) => {
+          const r = indexedDB.open("pole-repertoire", 1);
+          r.onupgradeneeded = () => { const d = r.result; d.createObjectStore("figures", {keyPath:"id"}); d.createObjectStore("sessions", {keyPath:"id"}); };
+          r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+        });
+        const all = name => new Promise((res, rej) => { const q = this.idb.transaction(name).objectStore(name).getAll(); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+        (await all("figures")).forEach(f => this.figures.set(f.id, f));
+        (await all("sessions")).forEach(s => this.sessions.set(s.id, s));
+      } catch(e){
+        this.idb = null; this.mode = "memory";
+      }
+    }
+  },
+
+  async _put(coll, obj){
+    const map = coll === "figures" ? this.figures : this.sessions;
+    const prev = map.get(obj.id);
+    map.set(obj.id, obj);
+    try {
+      if (this.mode === "cloud"){ const {id, ...body} = obj; await this.db.collection(coll).doc(id).set(body); }
+      else if (this.idb){ await new Promise((res, rej) => { const tx = this.idb.transaction(coll, "readwrite"); tx.objectStore(coll).put(obj); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); }
+    } catch(e){
+      if (prev) map.set(obj.id, prev); else map.delete(obj.id);
+      throw e;
+    }
+  },
+  async _del(coll, id){
+    const map = coll === "figures" ? this.figures : this.sessions;
+    const prev = map.get(id); map.delete(id);
+    try {
+      if (this.mode === "cloud") await this.db.collection(coll).doc(id).delete();
+      else if (this.idb){ await new Promise((res, rej) => { const tx = this.idb.transaction(coll, "readwrite"); tx.objectStore(coll).delete(id); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); }
+    } catch(e){ if (prev) map.set(id, prev); throw e; }
+  },
+  saveFigure(f){ return this._put("figures", f); },
+  saveSession(s){ return this._put("sessions", s); },
+  async deleteFigure(id){
+    await this._del("figures", id);
+    for (const s of [...this.sessions.values()]){
+      if ((s.figureIds || []).includes(id)) await this.saveSession({...s, figureIds: s.figureIds.filter(x => x !== id)});
+    }
+  },
+  deleteSession(id){ return this._del("sessions", id); }
+};
+
+function saveError(e){
+  const code = e && e.code;
+  if (code === "quota_exceeded") toast("Speicher ist voll. Lösche alte Trainings oder Fotos.");
+  else if (code === "invalid_argument" && Store.mode === "cloud"){ Store.writable = false; render(); toast("Du kannst diese Sammlung nur ansehen, nicht ändern."); }
+  else toast("Speichern hat nicht geklappt. Bitte noch einmal versuchen.");
+}
+
+/* ---------- Zustand ---------- */
+const ui = { tab:"rep", level:"alle", kind:"alle", q:"", selecting:false, selected:new Set(),
+             figId:null, sessId:null, pick:new Set(), pkLevel:"alle", assignIds:[] };
+
+const figs = () => [...Store.figures.values()].sort((a,b) => a.name.localeCompare(b.name, "de"));
+const sessionsSorted = () => [...Store.sessions.values()].sort((a,b) => (a.date + a.course).localeCompare(b.date + b.course));
+const courseNames = () => { const s = new Set(DEFAULT_COURSES); Store.sessions.forEach(x => x.course && s.add(x.course)); return [...s]; };
+
+function matches(f, q, level, kind){
+  if (level !== "alle" && f.level !== level) return false;
+  if (kind !== "alle" && (f.kind || "Figur") !== kind) return false;
+  if (q){ const t = (f.name + " " + (f.notes || "")).toLowerCase(); if (!t.includes(q.toLowerCase())) return false; }
+  return true;
+}
+
+/* ---------- Darstellung ---------- */
+function cardHTML(f, opts = {}){
+  const l = LV[f.level] || LEVELS[0];
+  const sel = opts.selected ? " sel" : "";
+  return `<button class="card${sel}" style="--c:${l.c}" data-action="${opts.action || "card"}" data-id="${esc(f.id)}" aria-pressed="${opts.selectable ? !!opts.selected : "false"}">
+    <div class="ph">${f.photo ? `<img src="${esc(f.photo)}" alt="" loading="lazy">` : `<span class="ini">${initials(f.name)}</span>`}</div>
+    <div class="body"><div class="nm">${esc(f.name)}</div>
+      ${opts.showLevel ? `<span class="kind" style="color:${l.c}">${l.label}</span> ` : ""}<span class="kind">${esc(f.kind || "Figur")}</span>
+      ${f.notes && !opts.compact ? `<p class="nt">${esc(f.notes)}</p>` : ""}
+    </div>
+    <span class="check" aria-hidden="true">✓</span>
+  </button>`;
+}
+
+function renderRep(){
+  const all = figs();
+  const list = all.filter(f => matches(f, ui.q, "alle", ui.kind));
+  const shownLevels = ui.level === "alle" ? LEVELS : [LV[ui.level]];
+  const ro = !Store.writable;
+  const chip = (group, val, label) => `<button class="chip" data-action="${group}" data-v="${val}" aria-pressed="${ui[group === "f-level" ? "level" : "kind"] === val}">${label}</button>`;
+
+  let html = `<div class="toolbar">
+    <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" id="q" value="${esc(ui.q)}" placeholder="Figur oder Notiz suchen" aria-label="Figur oder Notiz suchen"></div>
+    <div class="chips" role="group" aria-label="Schwierigkeit">${chip("f-level","alle","Alle")}${LEVELS.map(l => chip("f-level", l.id, l.label)).join("")}</div>
+    <div class="chips" role="group" aria-label="Art">${chip("f-kind","alle","Figuren & Spins")}${chip("f-kind","Figur","Nur Figuren")}${chip("f-kind","Spin","Nur Spins")}</div>
+    ${all.length && !ro ? `<button class="btn${ui.selecting ? " on" : ""}" data-action="toggle-select">${ui.selecting ? "Auswahl beenden" : "Für Training auswählen"}</button>` : ""}
+    ${ro ? "" : `<button class="btn primary" data-action="new-fig">+ Neue Figur</button>`}
+  </div>`;
+
+  if (!all.length){
+    html += `<div class="empty"><h2 style="font-family:var(--display);margin:0;color:var(--ink)">Dein Repertoire ist noch leer</h2>
+      <p>Lege die erste Figur oder den ersten Spin an – mit Foto, Schwierigkeit und Notizen zum Einstieg.</p>
+      ${ro ? "" : `<button class="btn primary" data-action="new-fig">+ Erste Figur anlegen</button>`}</div>`;
+  } else {
+    html += `<div class="board${shownLevels.length === 1 ? " single" : ""}${ui.selecting ? " selecting" : ""}">`;
+    for (const l of shownLevels){
+      const items = list.filter(f => f.level === l.id);
+      html += `<section class="col" style="--c:${l.c}" aria-label="${l.label}">
+        <div class="col-head">${lvlMark(l.id)}<h2>${l.label}</h2><span class="count">${items.length}</span></div>
+        ${items.length ? `<div class="cards">${items.map(f => cardHTML(f, {selected: ui.selected.has(f.id), selectable: ui.selecting})).join("")}</div>`
+          : `<div class="empty-col">${ui.q || ui.kind !== "alle" ? "Keine Treffer in dieser Stufe." : "Noch nichts in dieser Stufe."}</div>`}
+      </section>`;
+    }
+    html += `</div>`;
+  }
+  $("#app").innerHTML = html;
+  const q = $("#q");
+  if (q) q.addEventListener("input", e => { ui.q = e.target.value; const pos = e.target.selectionStart; renderRep(); const n = $("#q"); n.focus(); n.setSelectionRange(pos, pos); });
+  renderSelbar();
+}
+
+function renderSelbar(){
+  const host = $("#selbarHost");
+  if (ui.tab !== "rep" || !ui.selecting){ host.innerHTML = ""; return; }
+  const n = ui.selected.size;
+  host.innerHTML = `<div class="selbar" role="region" aria-label="Auswahl">
+    <span><b>${n}</b> ${n === 1 ? "Figur" : "Figuren"} ausgewählt</span>
+    <button class="btn ghost small" data-action="sel-clear" ${n ? "" : "disabled"}>Leeren</button>
+    <button class="btn primary small" data-action="sel-assign" ${n ? "" : "disabled"}>Zu Training hinzufügen</button>
+  </div>`;
+}
+
+function sessRow(s, today){
+  const d = dateObj(s.date);
+  const fl = (s.figureIds || []).map(id => Store.figures.get(id)).filter(Boolean);
+  const th = fl.slice(0,5).map(f => `<span class="t">${f.photo ? `<img src="${esc(f.photo)}" alt="">` : initials(f.name)}</span>`).join("");
+  return `<button class="sess${s.date === today ? " today" : ""}" data-action="open-sess" data-id="${esc(s.id)}">
+    <span class="date"><b>${d.getDate()}</b><span>${d.toLocaleDateString("de-DE",{weekday:"short"})}${s.date === today ? " · heute" : ""}</span></span>
+    <span><span class="course">${esc(s.course)}</span><br><span class="sub">${fl.length} ${fl.length === 1 ? "Figur" : "Figuren"}${fl.length ? ": " + esc(fl.slice(0,3).map(f => f.name).join(", ")) + (fl.length > 3 ? " …" : "") : ""}</span></span>
+    <span class="thumbs" aria-hidden="true">${th}</span>
+  </button>`;
+}
+
+function renderTrain(){
+  const today = todayISO();
+  const all = sessionsSorted();
+  const up = all.filter(s => s.date >= today);
+  const past = all.filter(s => s.date < today).reverse();
+  const ro = !Store.writable;
+  let html = `<div class="train-head"><h2>Trainingsplanung</h2>${ro ? "" : `<button class="btn primary" data-action="new-sess">+ Training planen</button>`}</div>`;
+  if (!all.length){
+    html += `<div class="empty"><p>Noch kein Training geplant. Lege ein Training mit Datum und Kurs an und wähle die Figuren dafür aus – oder markiere im Repertoire Figuren und füge sie einem Training hinzu.</p>${ro ? "" : `<button class="btn primary" data-action="new-sess">+ Training planen</button>`}</div>`;
+  } else {
+    if (!up.length) html += `<div class="empty"><p>Keine kommenden Trainings geplant.</p></div>`;
+    let m = "";
+    for (const s of up){ const mm = fmtMonth(s.date); if (mm !== m){ html += `<h3 class="month">${mm}</h3>`; m = mm; } html += sessRow(s, today); }
+    if (past.length){
+      html += `<details class="past"><summary>Vergangene Trainings (${past.length})</summary>`;
+      let pm = "";
+      for (const s of past){ const mm = fmtMonth(s.date); if (mm !== pm){ html += `<h3 class="month">${mm}</h3>`; pm = mm; } html += sessRow(s, today); }
+      html += `</details>`;
+    }
+  }
+  $("#app").innerHTML = html;
+  renderSelbar();
+}
+
+function render(){
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === ui.tab)));
+  if (ui.tab === "rep") renderRep(); else renderTrain();
+  const info = {cloud:"Gespeichert in deinem Claude-Konto – auf allen Geräten verfügbar.", local:"Gespeichert in diesem Browser auf diesem Gerät.", memory:"Achtung: Speichern ist in diesem Browser nicht möglich – Daten gehen beim Schließen verloren."}[Store.mode];
+  $("#storeInfo").textContent = info + (Store.writable ? "" : " Nur Ansicht.");
+  $("#courseList").innerHTML = courseNames().map(c => `<option value="${esc(c)}">`).join("");
+  if ($("#dlgSess").open && ui.sessId) fillSession();
+}
+Store.onChange = render;
+
+/* ---------- Dialog-Helfer ---------- */
+function openDlg(id){ const d = $(id); if (!d.open) d.showModal(); }
+function closeDlg(el){ const d = el.closest("dialog"); if (d) d.close(); }
+function confirmBox(title, text, yes = "Löschen"){
+  return new Promise(res => {
+    $("#cfTitle").textContent = title; $("#cfText").textContent = text; $("#cfYes").textContent = yes;
+    const d = $("#dlgConfirm");
+    let done = false;
+    const fin = v => { if (done) return; done = true; $("#cfYes").onclick = $("#cfNo").onclick = d.onclose = null; if (d.open) d.close(); res(v); };
+    $("#cfYes").onclick = () => fin(true); $("#cfNo").onclick = () => fin(false);
+    d.onclose = () => fin(false);
+    d.showModal();
+  });
+}
+
+/* ---------- Figur ansehen ---------- */
+function openFigure(id){
+  const f = Store.figures.get(id); if (!f) return;
+  ui.figId = id;
+  const l = LV[f.level] || LEVELS[0];
+  const used = sessionsSorted().filter(s => (s.figureIds || []).includes(id));
+  $("#fvTitle").textContent = f.name;
+  $("#fvBody").innerHTML = `
+    ${f.photo ? `<div class="big"><img src="${esc(f.photo)}" alt="Foto: ${esc(f.name)}"></div>` : ""}
+    <div class="meta" style="color:${l.c}">${lvlMark(f.level)} ${l.label}<span class="kind" style="margin:0">${esc(f.kind || "Figur")}</span></div>
+    ${f.notes ? `<div class="notes">${esc(f.notes)}</div>` : `<p class="used">Noch keine Notizen.</p>`}
+    ${used.length ? `<p class="used">Eingeplant in: ${used.map(s => `<a href="#" data-action="goto-sess" data-id="${esc(s.id)}">${esc(fmtShort(s.date))} · ${esc(s.course)}</a>`).join(", ")}</p>` : ""}`;
+  $("#dlgFigView").querySelector(".dlg-foot").hidden = !Store.writable;
+  openDlg("#dlgFigView");
+}
+
+/* ---------- Figur bearbeiten ---------- */
+let ffPhoto = null;
+$("#ffLevel").innerHTML = LEVELS.map(l => `<label style="--c:${l.c}"><input type="radio" name="level" value="${l.id}"><span>${lvlMark(l.id)} ${l.label}</span></label>`).join("");
+
+function setPrev(){
+  $("#ffPrev").innerHTML = ffPhoto ? `<img src="${ffPhoto}" alt="Vorschau">` : "Noch kein Foto";
+  $("#ffPhotoRemove").hidden = !ffPhoto;
+}
+function openFigForm(id, presetLevel){
+  const f = id ? Store.figures.get(id) : null;
+  ui.figId = id || null;
+  $("#ffTitle").textContent = f ? "Figur bearbeiten" : "Neue Figur";
+  $("#ffName").value = f ? f.name : "";
+  $("#ffNotes").value = f ? (f.notes || "") : "";
+  const lvl = f ? f.level : (presetLevel && presetLevel !== "alle" ? presetLevel : "leicht");
+  document.querySelectorAll('#ffLevel input').forEach(i => i.checked = i.value === lvl);
+  const kind = f ? (f.kind || "Figur") : (ui.kind !== "alle" ? ui.kind : "Figur");
+  document.querySelectorAll('#ffKind input').forEach(i => i.checked = i.value === kind);
+  ffPhoto = f ? f.photo || null : null; setPrev();
+  $("#ffDelete").hidden = !f;
+  $("#ffErr").hidden = true;
+  $("#ffPhoto").value = "";
+  openDlg("#dlgFigForm");
+  setTimeout(() => { if (!f) $("#ffName").focus(); }, 50);
+}
+
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let max = 1000, q = 0.8, out = "";
+      for (let i = 0; i < 6; i++){
+        const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        out = c.toDataURL("image/jpeg", q);
+        if (out.length < 200000) break;
+        max = Math.round(max * 0.8); q = Math.max(0.55, q - 0.06);
+      }
+      resolve(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Bild")); };
+    img.src = url;
+  });
+}
+$("#ffPhoto").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0]; if (!file) return;
+  $("#ffPrev").textContent = "Foto wird vorbereitet …";
+  try { ffPhoto = await compressImage(file); setPrev(); }
+  catch(err){ ffPhoto = ffPhoto || null; setPrev(); toast("Dieses Bild lässt sich nicht öffnen. Bitte ein JPG oder PNG wählen."); }
+});
+$("#ffPhotoRemove").addEventListener("click", () => { ffPhoto = null; setPrev(); });
+
+$("#figForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = $("#ffName").value.trim();
+  if (!name){ $("#ffErr").textContent = "Bitte gib der Figur einen Namen."; $("#ffErr").hidden = false; $("#ffName").focus(); return; }
+  const old = ui.figId ? Store.figures.get(ui.figId) : null;
+  const f = {
+    id: old ? old.id : uid(), name,
+    level: document.querySelector('#ffLevel input:checked')?.value || "leicht",
+    kind: document.querySelector('#ffKind input:checked')?.value || "Figur",
+    notes: $("#ffNotes").value.trim(), photo: ffPhoto || null,
+    created: old ? old.created || Date.now() : Date.now(), updated: Date.now()
+  };
+  $("#ffSave").disabled = true;
+  try {
+    await Store.saveFigure(f);
+    $("#dlgFigForm").close(); render();
+    toast(old ? "Änderungen gespeichert" : `„${f.name}“ angelegt`);
+    if (old && $("#dlgFigView").open) openFigure(f.id);
+  } catch(err){ saveError(err); }
+  finally { $("#ffSave").disabled = false; }
+});
+$("#ffDelete").addEventListener("click", async () => {
+  const f = Store.figures.get(ui.figId); if (!f) return;
+  if (!await confirmBox("Figur löschen?", `„${f.name}“ wird aus dem Repertoire und aus allen geplanten Trainings entfernt.`)) return;
+  try { await Store.deleteFigure(f.id); ui.selected.delete(f.id); $("#dlgFigForm").close(); $("#dlgFigView").close(); render(); toast("Figur gelöscht"); }
+  catch(err){ saveError(err); }
+});
+
+/* ---------- Training ansehen ---------- */
+function fillSession(){
+  const s = Store.sessions.get(ui.sessId);
+  if (!s){ $("#dlgSess").close(); return; }
+  $("#sdTitle").innerHTML = `${esc(s.course)}<br><span style="font-family:var(--body);font-weight:500;font-size:.95rem;color:var(--muted)">${esc(fmtLong(s.date))}</span>`;
+  const fl = (s.figureIds || []).map(id => Store.figures.get(id)).filter(Boolean);
+  const ro = !Store.writable;
+  let html = s.note ? `<div class="sess-note">${esc(s.note)}</div>` : "";
+  if (!fl.length){
+    html += `<div class="empty"><p>Für dieses Training sind noch keine Figuren eingeplant.</p>${ro ? "" : `<button class="btn primary" data-action="sd-add">Figuren hinzufügen</button>`}</div>`;
+  } else {
+    html += `<ol class="plan-list">${fl.map((f, i) => { const l = LV[f.level] || LEVELS[0]; return `<li class="plan-item">
+      <button class="pimg" data-action="card" data-id="${esc(f.id)}" aria-label="${esc(f.name)} ansehen">${f.photo ? `<img src="${esc(f.photo)}" alt="">` : `<span class="ini" style="--c:${l.c};color:${l.c};font-family:var(--display);font-weight:800">${initials(f.name)}</span>`}</button>
+      <div><div class="pname">${esc(f.name)} <span style="color:${l.c}">${lvlMark(f.level)}</span></div>
+        <span class="kind">${esc(f.kind || "Figur")}</span> <span class="kind" style="color:${l.c}">${l.label}</span>
+        ${f.notes ? `<div class="pnotes">${esc(f.notes)}</div>` : ""}</div>
+      ${ro ? "" : `<div class="pact">
+        <button class="icon" data-action="sd-up" data-i="${i}" ${i === 0 ? "disabled" : ""} aria-label="Nach oben">↑</button>
+        <button class="icon" data-action="sd-down" data-i="${i}" ${i === fl.length - 1 ? "disabled" : ""} aria-label="Nach unten">↓</button>
+        <button class="icon" data-action="sd-remove" data-id="${esc(f.id)}" aria-label="Aus Training entfernen">×</button></div>`}
+    </li>`; }).join("")}</ol>`;
+  }
+  $("#sdBody").innerHTML = html;
+  $("#dlgSess").querySelector(".dlg-foot").hidden = ro;
+}
+function openSession(id){ ui.sessId = id; fillSession(); openDlg("#dlgSess"); }
+
+async function updateSession(mut){
+  const s = Store.sessions.get(ui.sessId); if (!s) return;
+  const ids = (s.figureIds || []).filter(id => Store.figures.has(id));
+  const next = {...s, figureIds: mut(ids.slice())};
+  try { await Store.saveSession(next); fillSession(); render(); } catch(err){ saveError(err); }
+}
+
+/* ---------- Training anlegen/ändern ---------- */
+let sfEditing = null, sfAfter = null;
+function openSessForm(id, after){
+  const s = id ? Store.sessions.get(id) : null;
+  sfEditing = s ? s.id : null; sfAfter = after || null;
+  $("#sfTitle").textContent = s ? "Training ändern" : "Training planen";
+  $("#sfDate").value = s ? s.date : todayISO();
+  $("#sfCourse").value = s ? s.course : "";
+  $("#sfNote").value = s ? (s.note || "") : "";
+  $("#sfErr").hidden = true;
+  openDlg("#dlgSessForm");
+}
+$("#sessForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const date = $("#sfDate").value, course = $("#sfCourse").value.trim();
+  if (!date || !course){ $("#sfErr").textContent = "Bitte Datum und Kurs angeben."; $("#sfErr").hidden = false; return; }
+  const old = sfEditing ? Store.sessions.get(sfEditing) : null;
+  const s = {id: old ? old.id : uid(), date, course, note: $("#sfNote").value.trim(), figureIds: old ? old.figureIds || [] : [], created: old ? old.created || Date.now() : Date.now()};
+  $("#sfSave").disabled = true;
+  try {
+    await Store.saveSession(s); $("#dlgSessForm").close(); render();
+    if (old){ toast("Training geändert"); }
+    else { toast("Training angelegt"); openSession(s.id); openPicker(); }
+  } catch(err){ saveError(err); }
+  finally { $("#sfSave").disabled = false; }
+});
+
+/* ---------- Figuren-Auswahl für ein Training ---------- */
+function openPicker(){
+  const s = Store.sessions.get(ui.sessId); if (!s) return;
+  ui.pick = new Set(s.figureIds || []);
+  ui.pkLevel = "alle"; $("#pkQ").value = "";
+  renderPicker(); openDlg("#dlgPick");
+}
+function renderPicker(){
+  $("#pkLevels").innerHTML = [["alle","Alle"], ...LEVELS.map(l => [l.id, l.label])].map(([v, t]) => `<button class="chip" data-action="pk-level" data-v="${v}" aria-pressed="${ui.pkLevel === v}">${t}</button>`).join("");
+  const list = figs().filter(f => matches(f, $("#pkQ").value.trim(), ui.pkLevel, "alle"));
+  $("#pkGrid").innerHTML = list.length ? list.map(f => cardHTML(f, {action:"pk-toggle", selected: ui.pick.has(f.id), selectable:true, showLevel:true, compact:true})).join("")
+    : `<p class="hint" style="grid-column:1/-1">${Store.figures.size ? "Keine passenden Figuren." : "Lege zuerst Figuren im Repertoire an."}</p>`;
+  $("#pkOk").textContent = `Übernehmen (${ui.pick.size})`;
+}
+$("#pkQ").addEventListener("input", renderPicker);
+
+/* ---------- Auswahl aus dem Repertoire zuordnen ---------- */
+function openAssign(ids){
+  ui.assignIds = ids;
+  const today = todayISO();
+  const up = sessionsSorted().filter(s => s.date >= today);
+  $("#asTitle").textContent = `${ids.length} ${ids.length === 1 ? "Figur" : "Figuren"} zu Training hinzufügen`;
+  $("#asList").innerHTML = up.map((s, i) => `<label><input type="radio" name="as" value="${esc(s.id)}" ${i === 0 ? "checked" : ""}><span><b>${esc(s.course)}</b><small>${esc(fmtLong(s.date))} · ${(s.figureIds || []).length} Figuren</small></span></label>`).join("")
+    + `<label><input type="radio" name="as" value="__new" ${up.length ? "" : "checked"}><span><b>Neues Training anlegen</b></span></label>`;
+  $("#asDate").value = todayISO();
+  const lv = ids.map(id => Store.figures.get(id)?.level);
+  $("#asCourse").value = lv.length && lv.every(x => x === "leicht") ? "Anfängerkurs" : "";
+  $("#asErr").hidden = true;
+  syncAssign(); openDlg("#dlgAssign");
+}
+function syncAssign(){ $("#asNew").hidden = document.querySelector('#asList input:checked')?.value !== "__new"; }
+$("#asList").addEventListener("change", syncAssign);
+$("#assignForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const v = document.querySelector('#asList input:checked')?.value;
+  let s;
+  if (v === "__new"){
+    const date = $("#asDate").value, course = $("#asCourse").value.trim();
+    if (!date || !course){ $("#asErr").textContent = "Bitte Datum und Kurs angeben."; $("#asErr").hidden = false; return; }
+    s = {id: uid(), date, course, note:"", figureIds: [], created: Date.now()};
+  } else s = {...Store.sessions.get(v)};
+  const ids = (s.figureIds || []).slice();
+  ui.assignIds.forEach(id => { if (!ids.includes(id)) ids.push(id); });
+  s.figureIds = ids;
+  try {
+    await Store.saveSession(s);
+    $("#dlgAssign").close(); $("#dlgFigView").close();
+    ui.selected.clear(); ui.selecting = false; render();
+    toast(`Hinzugefügt: ${s.course}, ${fmtShort(s.date)}`);
+  } catch(err){ saveError(err); }
+});
+
+/* ---------- Sicherung ---------- */
+async function doExport(){
+  const data = JSON.stringify({app:"pole-repertoire", version:1, exported:new Date().toISOString(), figures:[...Store.figures.values()], sessions:[...Store.sessions.values()]});
+  const filename = `pole-repertoire-${todayISO()}.json`;
+  if (Store.downloads){
+    try { await Store.downloads.save({filename, data}); } catch(e){ if (e && e.code !== "cancelled") toast("Export wurde nicht gespeichert."); }
+    return;
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([data], {type:"application/json"}));
+  a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+$("#importFile").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0]; e.target.value = ""; if (!file) return;
+  if (!Store.writable){ toast("In dieser Ansicht kann nichts importiert werden."); return; }
+  try {
+    const d = JSON.parse(await file.text());
+    if (d.app !== "pole-repertoire") throw new Error("format");
+    if (!await confirmBox("Sicherung importieren?", `${(d.figures || []).length} Figuren und ${(d.sessions || []).length} Trainings werden übernommen. Einträge mit gleicher Kennung werden überschrieben.`, "Importieren")) return;
+    for (const f of d.figures || []) if (f && f.id && f.name) await Store.saveFigure(f);
+    for (const s of d.sessions || []) if (s && s.id && s.date) await Store.saveSession(s);
+    render(); toast("Sicherung importiert");
+  } catch(err){ toast(err && err.message === "format" ? "Diese Datei ist keine Sicherung des Pole-Repertoires." : "Import hat nicht geklappt."); }
+});
+
+/* ---------- Klicks ---------- */
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-action]"); if (!el) return;
+  const a = el.dataset.action, id = el.dataset.id;
+  switch (a){
+    case "tab": ui.tab = el.dataset.tab; render(); window.scrollTo(0,0); break;
+    case "f-level": ui.level = el.dataset.v; renderRep(); break;
+    case "f-kind": ui.kind = el.dataset.v; renderRep(); break;
+    case "new-fig": openFigForm(null, ui.level); break;
+    case "card":
+      if (ui.selecting && ui.tab === "rep" && !el.closest("dialog")){
+        ui.selected.has(id) ? ui.selected.delete(id) : ui.selected.add(id);
+        el.classList.toggle("sel", ui.selected.has(id)); el.setAttribute("aria-pressed", String(ui.selected.has(id)));
+        renderSelbar();
+      } else openFigure(id);
+      break;
+    case "toggle-select": ui.selecting = !ui.selecting; if (!ui.selecting) ui.selected.clear(); renderRep(); break;
+    case "sel-clear": ui.selected.clear(); renderRep(); break;
+    case "sel-assign": if (ui.selected.size) openAssign([...ui.selected]); break;
+    case "close": closeDlg(el); break;
+    case "fv-edit": $("#dlgFigView").close(); openFigForm(ui.figId); break;
+    case "fv-plan": openAssign([ui.figId]); break;
+    case "goto-sess": e.preventDefault(); $("#dlgFigView").close(); openSession(id); break;
+    case "new-sess": openSessForm(null); break;
+    case "open-sess": openSession(id); break;
+    case "sd-edit": openSessForm(ui.sessId); break;
+    case "sd-add": openPicker(); break;
+    case "sd-delete": {
+      const s = Store.sessions.get(ui.sessId); if (!s) break;
+      if (!await confirmBox("Training löschen?", `${s.course} am ${fmtLong(s.date)} wird gelöscht. Die Figuren bleiben im Repertoire.`)) break;
+      try { await Store.deleteSession(s.id); $("#dlgSess").close(); render(); toast("Training gelöscht"); } catch(err){ saveError(err); }
+      break;
+    }
+    case "sd-up": { const i = +el.dataset.i; updateSession(ids => { [ids[i-1], ids[i]] = [ids[i], ids[i-1]]; return ids; }); break; }
+    case "sd-down": { const i = +el.dataset.i; updateSession(ids => { [ids[i+1], ids[i]] = [ids[i], ids[i+1]]; return ids; }); break; }
+    case "sd-remove": updateSession(ids => ids.filter(x => x !== id)); break;
+    case "pk-level": ui.pkLevel = el.dataset.v; renderPicker(); break;
+    case "pk-toggle": ui.pick.has(id) ? ui.pick.delete(id) : ui.pick.add(id); renderPicker(); break;
+    case "pk-ok": {
+      const s = Store.sessions.get(ui.sessId); if (!s) break;
+      const keep = (s.figureIds || []).filter(x => ui.pick.has(x));
+      ui.pick.forEach(x => { if (!keep.includes(x)) keep.push(x); });
+      try { await Store.saveSession({...s, figureIds: keep}); $("#dlgPick").close(); fillSession(); render(); } catch(err){ saveError(err); }
+      break;
+    }
+    case "export": doExport(); break;
+  }
+});
+document.querySelectorAll("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
+
+/* ---------- Start ---------- */
+(async () => {
+  await Store.init();
+  render();
+  try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch(e){}
+})();
+if ("serviceWorker" in navigator && location.protocol === "https:"){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").then(reg => {
+      reg.addEventListener("updatefound", () => {
+        const w = reg.installing;
+        w && w.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) toast("Neue Version geladen – App einmal neu öffnen."); });
+      });
+    }).catch(() => {});
+  });
+}
+})();
+</script>
+</body>
+</html>
