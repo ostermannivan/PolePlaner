@@ -168,6 +168,8 @@ select.sel{padding:.5rem .7rem;border:1px solid var(--line);border-radius:12px;b
 .thumbs .t{width:38px;height:38px;border-radius:50%;border:2px solid var(--surface);background:var(--surface-2);overflow:hidden;margin-left:-10px;display:grid;place-items:center;font-weight:800;font-size:.75rem;color:var(--muted)}
 .thumbs .t:first-child{margin-left:0}
 .thumbs img{width:100%;height:100%;object-fit:cover}
+.thumbs .ini,.chain .ini{font-family:var(--body);font-size:.75rem;font-weight:800;opacity:1}
+.tag.priv{background:var(--accent-soft);color:var(--accent);margin:0 .2rem 0 0;vertical-align:2px}
 .prog{display:inline-block;font-size:.78rem;font-weight:700;padding:.05rem .45rem;border-radius:6px;background:var(--ok-bg);color:var(--easy);margin-left:.3rem}
 details.past{margin-top:1.6rem}
 details.past summary{cursor:pointer;font-weight:600;color:var(--muted)}
@@ -203,6 +205,8 @@ label.f,.f{display:block;font-weight:600;margin:0 0 .9rem}
 .f input[type=text],.f input[type=date],.f input[type=number],.f textarea,.f select{width:100%;padding:.6rem .75rem;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-weight:400}
 .f textarea{min-height:100px;resize:vertical}
 .two{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:.6rem}
+.two.wide{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.two.wide .f{margin-bottom:.9rem}
 .hint{color:var(--muted);font-size:.85rem;font-weight:400}
 .err{color:var(--hard);font-size:.9rem}
 .seg{display:flex;gap:.4rem;flex-wrap:wrap}
@@ -298,11 +302,6 @@ a.lnk,.lnk{color:inherit;background:none;border:0;padding:0;text-decoration:unde
 .run .res{justify-content:center;margin:0 0 .8rem}
 .run .res button{padding:.45rem 1rem;font-size:.95rem}
 
-.style-opt{display:block;border:1.5px solid var(--line);border-radius:12px;padding:.6rem .8rem;margin-bottom:.4rem;cursor:pointer;font-weight:400}
-.style-opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
-.style-opt b{font-weight:700}
-.progress{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-top:.5rem}
-.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
 
 footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--muted);font-size:.85rem}
 .toast{position:fixed;left:50%;top:calc(1rem + env(safe-area-inset-top,0px));translate:-50% 0;background:var(--ink);color:var(--surface);padding:.6rem 1rem;border-radius:12px;z-index:20;font-weight:600;max-width:calc(100% - 2rem);opacity:0;pointer-events:none;transition:opacity .2s}
@@ -348,6 +347,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
     </div>
     <label class="f"><span>Name</span><input type="text" id="ffName" autocomplete="off" placeholder="z. B. Fireman Spin"></label>
     <label class="f"><span>Kategorie</span><select id="ffCat"></select></label>
+    <label class="f" id="ffCatNewWrap" hidden><span>Name der neuen Kategorie</span><input type="text" id="ffCatNew" autocomplete="off" placeholder="z. B. Seat"></label>
     <div class="f"><span class="flabel">Schwierigkeit</span><div class="seg" id="ffLevel"></div></div>
     <div class="f"><span class="flabel">Voraussetzungen <span class="hint">(Figuren, die man vorher können sollte)</span></span>
       <div class="chips" id="ffPre"></div>
@@ -413,9 +413,21 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 <dialog id="dlgSessForm"><form class="dlg" id="sessForm" novalidate>
   <div class="dlg-head"><h3 id="sfTitle">Training planen</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
   <div class="dlg-body">
-    <label class="f"><span>Datum</span><input type="date" id="sfDate"></label>
-    <label class="f"><span>Kurs</span><select id="sfCourse"></select></label>
-    <label class="f" id="sfNewWrap" hidden><span>Name des neuen Kurses</span><input type="text" id="sfNew" autocomplete="off" placeholder="z. B. Anfängerkurs Donnerstag"></label>
+    <div class="f"><span class="flabel">Art</span><div class="seg" id="sfKind">
+      <label><input type="radio" name="skind" value="kurs" checked><span>Kurstraining</span></label>
+      <label><input type="radio" name="skind" value="privat"><span>Privatstunde</span></label></div></div>
+    <div class="two wide"><label class="f"><span>Datum</span><input type="date" id="sfDate"></label><label class="f"><span>Uhrzeit</span><input type="time" id="sfTime"></label></div>
+    <div id="sfKursBox">
+      <label class="f"><span>Kurs</span><select id="sfCourse"></select></label>
+      <label class="f" id="sfNewWrap" hidden><span>Name des neuen Kurses</span><input type="text" id="sfNew" autocomplete="off" placeholder="z. B. Anfängerkurs Donnerstag"></label>
+    </div>
+    <div id="sfPrivBox" hidden>
+      <label class="f"><span>Art der Stunde</span><select id="sfPtype"></select></label>
+      <div class="f"><span class="flabel">Schülerinnen</span>
+        <div class="chips" id="sfStudents"></div>
+        <div class="add-row"><input type="text" id="sfNewStudent" placeholder="Neue Schülerin hinzufügen" aria-label="Neue Schülerin"><button type="button" class="btn small" data-action="sf-add-student">Hinzufügen</button></div>
+      </div>
+    </div>
     <div class="f"><span class="flabel">Aufwärmen <span class="hint">(optional)</span></span>
       <div class="two"><input type="text" id="sfWarm" placeholder="z. B. Schulter-Mobilisation" aria-label="Aufwärmen"><input type="number" id="sfWarmMin" min="0" max="120" inputmode="numeric" placeholder="Min." aria-label="Minuten Aufwärmen"></div></div>
     <div class="f"><span class="flabel">Cool-down <span class="hint">(optional)</span></span>
@@ -447,11 +459,6 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
   <div class="dlg-head"><h3 id="asTitle">Zu Training hinzufügen</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
   <div class="dlg-body">
     <div class="radio-list" id="asList"></div>
-    <div id="asNew">
-      <label class="f"><span>Datum</span><input type="date" id="asDate"></label>
-      <label class="f"><span>Kurs</span><select id="asCourse"></select></label>
-      <label class="f" id="asNewWrap" hidden><span>Name des neuen Kurses</span><input type="text" id="asNewName" autocomplete="off"></label>
-    </div>
     <p class="err" id="asErr" hidden></p>
   </div>
   <div class="dlg-foot"><button type="button" class="btn" data-action="close">Abbrechen</button><button type="submit" class="btn primary">Hinzufügen</button></div>
@@ -498,11 +505,8 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 <dialog id="dlgSettings"><div class="dlg">
   <div class="dlg-head"><h3>Einstellungen</h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
   <div class="dlg-body">
-    <h4 class="sec-t" style="margin-top:0">Bildstil für alle Fotos</h4>
-    <p class="muted" style="margin-top:0">Jedes Foto wird automatisch im gewählten Stil angezeigt, damit alle Figuren einheitlich aussehen. Das Original bleibt gespeichert.</p>
-    <div id="setStyles"></div>
-    <div id="setProg" hidden><span class="muted" id="setProgT"></span><div class="progress"><i id="setProgBar"></i></div></div>
-    <h4 class="sec-t">Kategorien</h4>
+    <h4 class="sec-t" style="margin-top:0">Kategorien</h4>
+    <p class="muted" style="margin-top:0">Neue Kategorien kannst du hier oder direkt beim Anlegen einer Figur hinzufügen. Antippen entfernt eine Kategorie aus der Auswahl – Figuren behalten sie.</p>
     <div class="chips" id="setCats"></div>
     <div class="add-row"><input type="text" id="setNewCat" placeholder="Neue Kategorie" aria-label="Neue Kategorie"><button class="btn small" data-action="cat-add">Hinzufügen</button></div>
     <h4 class="sec-t">Sicherung</h4>
@@ -524,7 +528,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 <script>
 (() => {
 "use strict";
-const VERSION = "10.26.3";
+const VERSION = "10.26.4";
 
 /* ================= Grunddaten ================= */
 const LEVELS = [
@@ -533,15 +537,10 @@ const LEVELS = [
   {id:"schwer", label:"Schwer", n:3, c:"var(--hard)"}
 ];
 const LV = Object.fromEntries(LEVELS.map(l => [l.id, l]));
-const DEFAULT_CATS = ["Spin", "Pose", "Climb", "Invert", "Floorwork", "Flexibility", "Übergang"];
+const DEFAULT_CATS = ["Spin", "Pose", "Seat", "Climb", "Invert", "Floorwork", "Flexibility", "Übergang"];
 const PHOTO_LABELS = ["Einstieg", "Position", "Ausstieg", "Detail"];
-const STYLES = {
-  original: ["Original", "Die Fotos bleiben, wie sie sind."],
-  comic: ["Comic", "Klare Konturen und flächige Farben, wie gezeichnet."],
-  duoton: ["Duoton", "Alle Fotos in Grau und Rosé aus dem Logo – am einheitlichsten."],
-  skizze: ["Bleistiftskizze", "Wie mit Bleistift gezeichnet, in Grautönen."]
-};
 const STATUS = {ok:"Geschafft", teil:"Teilweise", nein:"Noch nicht"};
+const PTYPES = ["Einzelstunde", "Gruppenstunde", "Workshop", "Probestunde"];
 const COLLS = ["figures", "sessions", "combos", "courses", "students", "settings"];
 
 /* ================= Helfer ================= */
@@ -604,12 +603,13 @@ const Store = {
   async delPhoto(id){ dropPhoto(id); if (!this.idb){ this.memPhotos.delete(id); return; } await this._req("photos", "readwrite", st => st.delete(id)); },
   async photoIds(){ if (!this.idb) return [...this.memPhotos.keys()]; return this._req("photos", "readonly", st => st.getAllKeys()); }
 };
-const S = () => Store.get("settings", "app") || {id:"app", photoStyle:"original", categories: DEFAULT_CATS.slice()};
+const S = () => Store.get("settings", "app") || {id:"app", categories: DEFAULT_CATS.slice(), catsV2: true};
 const saveSettings = patch => Store.put("settings", {...S(), ...patch});
 
 /* ================= Alte Daten übernehmen ================= */
 async function migrate(){
   if (!Store.get("settings", "app")) await Store.put("settings", S());
+  if (!S().catsV2){ const c = S().categories || []; await saveSettings({categories: c.includes("Seat") ? c : [...c.slice(0, 2), "Seat", ...c.slice(2)], catsV2: true}); }
   for (const f of Store.all("figures")){
     const n = {...f}; let ch = false;
     if (typeof n.photo === "string" && n.photo.startsWith("data:")){
@@ -638,6 +638,7 @@ async function migrate(){
       n.courseId = c.id; ch = true;
     }
     if (!n.results){ n.results = {}; ch = true; }
+    if (!n.kind){ n.kind = "kurs"; ch = true; }
     if (ch) await Store.put("sessions", n);
   }
 }
@@ -658,60 +659,6 @@ async function prepareOriginal(file){
   for (let i = 0; i < 5; i++){ const [c] = canvasFor(img, max); b = await canvasBlob(c, q); if (b && b.size < 350000) break; max = Math.round(max * 0.8); q = Math.max(0.6, q - 0.06); }
   if (!b) throw new Error("img"); return b;
 }
-function boxBlur(src, w, h, r){
-  const tmp = new Float32Array(w*h), out = new Float32Array(w*h), d = 2*r + 1;
-  for (let y = 0; y < h; y++){ const o = y*w; let sum = 0; for (let i = -r; i <= r; i++) sum += src[o + Math.min(w-1, Math.max(0, i))];
-    for (let x = 0; x < w; x++){ tmp[o+x] = sum / d; sum += src[o + Math.min(w-1, x+r+1)] - src[o + Math.max(0, x-r)]; } }
-  for (let x = 0; x < w; x++){ let sum = 0; for (let i = -r; i <= r; i++) sum += tmp[Math.min(h-1, Math.max(0, i))*w + x];
-    for (let y = 0; y < h; y++){ out[y*w+x] = sum / d; sum += tmp[Math.min(h-1, y+r+1)*w + x] - tmp[Math.max(0, y-r)*w + x]; } }
-  return out;
-}
-function channels(px, n){ const R = new Float32Array(n), G = new Float32Array(n), B = new Float32Array(n), L = new Float32Array(n);
-  for (let i = 0; i < n; i++){ R[i] = px[i*4]; G[i] = px[i*4+1]; B[i] = px[i*4+2]; L[i] = .299*R[i] + .587*G[i] + .114*B[i]; } return {R, G, B, L}; }
-function stretch(L){ const h = new Uint32Array(256); for (const v of L) h[Math.min(255, v|0)]++; const n = L.length; let a = 0, lo = 0, hi = 255;
-  for (let i = 0; i < 256; i++){ a += h[i]; if (a > n*0.02){ lo = i; break; } } a = 0; for (let i = 255; i >= 0; i--){ a += h[i]; if (a > n*0.02){ hi = i; break; } }
-  return [lo, Math.max(lo + 1, hi)]; }
-const clamp = v => v < 0 ? 0 : v > 255 ? 255 : v;
-const FILTERS = {
-  comic(px, w, h){
-    const n = w*h; let {R, G, B} = channels(px, n);
-    for (let k = 0; k < 2; k++){ R = boxBlur(R, w, h, 2); G = boxBlur(G, w, h, 2); B = boxBlur(B, w, h, 2); }
-    const L = new Float32Array(n); for (let i = 0; i < n; i++) L[i] = .299*R[i] + .587*G[i] + .114*B[i];
-    const [lo, hi] = stretch(L); const E = new Float32Array(n);
-    for (let y = 1; y < h-1; y++) for (let x = 1; x < w-1; x++){ const i = y*w + x;
-      const gx = -L[i-w-1] - 2*L[i-1] - L[i+w-1] + L[i-w+1] + 2*L[i+1] + L[i+w+1];
-      const gy = -L[i-w-1] - 2*L[i-w] - L[i-w+1] + L[i+w-1] + 2*L[i+w] + L[i+w+1];
-      E[i] = Math.min(1, Math.max(0, (Math.sqrt(gx*gx + gy*gy) - 70) / 90)); }
-    for (let i = 0; i < n; i++){
-      const l = Math.max(1, L[i]); const t = Math.min(1, Math.max(0, (l - lo) / (hi - lo)));
-      const lq = (Math.round(t * 4) / 4) * 210 + 40; const f = lq / l;
-      const r = (l + (R[i] - l) * 1.3) * f, g = (l + (G[i] - l) * 1.3) * f, b = (l + (B[i] - l) * 1.3) * f;
-      const e = E[i] * 0.95;
-      px[i*4] = clamp(r*(1-e) + 55*e); px[i*4+1] = clamp(g*(1-e) + 52*e); px[i*4+2] = clamp(b*(1-e) + 53*e);
-    }
-  },
-  duoton(px, w, h){
-    const n = w*h; const {L} = channels(px, n); const [lo, hi] = stretch(L);
-    const A = [70,66,67], M = [222,145,148], Z = [255,247,247];
-    for (let i = 0; i < n; i++){ let t = Math.min(1, Math.max(0, (L[i] - lo) / (hi - lo))); t = Math.pow(t, 0.9);
-      const [p, q, u] = t < 0.55 ? [A, M, t / 0.55] : [M, Z, (t - 0.55) / 0.45];
-      px[i*4] = p[0] + (q[0]-p[0])*u; px[i*4+1] = p[1] + (q[1]-p[1])*u; px[i*4+2] = p[2] + (q[2]-p[2])*u; }
-  },
-  skizze(px, w, h){
-    const n = w*h; const {L} = channels(px, n); const inv = new Float32Array(n);
-    for (let i = 0; i < n; i++) inv[i] = 255 - L[i];
-    let b = boxBlur(inv, w, h, 5); b = boxBlur(b, w, h, 5);
-    for (let i = 0; i < n; i++){ let v = b[i] >= 254 ? 255 : Math.min(255, L[i] * 255 / (255 - b[i]));
-      v = 255 - (255 - v) * 1.25; v = clamp(v); const out = 255 - (255 - v) * (255 - 59) / 255;
-      px[i*4] = out; px[i*4+1] = out - 1; px[i*4+2] = out; }
-  }
-};
-async function stylize(blob, style){
-  if (!FILTERS[style]) return null;
-  const img = await loadImg(blob); const [c, x] = canvasFor(img, 900);
-  const d = x.getImageData(0, 0, c.width, c.height); FILTERS[style](d.data, c.width, c.height); x.putImageData(d, 0, 0);
-  return canvasBlob(c, 0.86);
-}
 const toBuf = b => b ? b.arrayBuffer() : null;
 const jpg = buf => new Blob([buf], {type:"image/jpeg"});
 
@@ -720,8 +667,7 @@ const pcache = new Map();
 function photoURL(pid){
   if (pcache.has(pid)) return pcache.get(pid);
   const p = (async () => { const r = await Store.getPhoto(pid); if (!r) return "";
-    const st = S().photoStyle; const buf = (st !== "original" && r.styled && r.style === st) ? r.styled : r.orig;
-    return URL.createObjectURL(jpg(buf)); })().catch(() => "");
+    return URL.createObjectURL(jpg(r.orig)); })().catch(() => "");
   pcache.set(pid, p); return p;
 }
 function dropPhoto(pid){ const p = pcache.get(pid); if (p) p.then(u => u && URL.revokeObjectURL(u)); pcache.delete(pid); }
@@ -730,25 +676,11 @@ function hydrate(root = document){
   root.querySelectorAll("img[data-pid]").forEach(img => { if (img.dataset.done) return; img.dataset.done = "1";
     photoURL(img.dataset.pid).then(u => { if (u) img.src = u; }); });
 }
-let restyling = false;
-async function restyleAll(onlyMismatched){
-  if (restyling) return; restyling = true;
-  const st = S().photoStyle; const ids = await Store.photoIds(); let todo = [];
-  for (const id of ids){ const r = await Store.getPhoto(id); if (r && (!onlyMismatched || (st === "original" ? r.styled : r.style !== st || !r.styled))) todo.push(id); }
-  const box = $("#setProg");
-  for (let k = 0; k < todo.length; k++){
-    const msg = `Fotos werden umgewandelt … ${k + 1} von ${todo.length}`;
-    if (box){ box.hidden = false; $("#setProgT").textContent = msg; $("#setProgBar").style.width = Math.round((k / todo.length) * 100) + "%"; }
-    if (!$("#dlgSettings").open) toast(msg, 4000);
-    try { const r = await Store.getPhoto(todo[k]); if (!r) continue;
-      if (st === "original"){ r.styled = null; r.style = "original"; }
-      else { r.styled = await toBuf(await stylize(jpg(r.orig), st)); r.style = st; }
-      await Store.putPhoto(r);
-    } catch(e){}
-  }
-  if (box){ box.hidden = true; }
-  restyling = false;
-  if (todo.length){ clearPhotoCache(); render(); if ($("#dlgFigView").open && ui.figId) openFigure(ui.figId); toast("Alle Fotos sind umgewandelt."); }
+/* Alte Filter-Versionen der Fotos einmalig aufräumen (Platz sparen) */
+async function dropStyled(){
+  if (S().stylesRemoved) return;
+  try { for (const id of await Store.photoIds()){ const r = await Store.getPhoto(id); if (r && r.styled){ r.styled = null; r.style = "original"; await Store.putPhoto(r); } }
+    const n = {...S(), stylesRemoved: true}; delete n.photoStyle; await Store.put("settings", n); } catch(e){}
 }
 
 /* ================= Abgeleitete Daten ================= */
@@ -756,8 +688,18 @@ const figs = () => Store.all("figures").sort(byName);
 const combos = () => Store.all("combos").sort(byName);
 const courses = () => Store.all("courses").sort(byName);
 const students = () => Store.all("students").sort(byName);
-const sessionsSorted = () => Store.all("sessions").sort((a, b) => (a.date + courseName(a)).localeCompare(b.date + courseName(b)));
-const courseName = s => (Store.get("courses", s.courseId) || {}).name || s.course || "Kurs";
+const sessionsSorted = () => Store.all("sessions").sort((a, b) => (a.date + (a.time || "99") + sessTitle(a)).localeCompare(b.date + (b.time || "99") + sessTitle(b)));
+const isPriv = s => s.kind === "privat";
+const sessStudents = s => (s.studentIds || []).map(id => Store.get("students", id)).filter(Boolean).sort(byName);
+const namesShort = list => list.length <= 3 ? list.map(x => x.name).join(", ") : list.slice(0, 2).map(x => x.name).join(", ") + ` +${list.length - 2}`;
+const sessTitle = s => isPriv(s) ? (s.ptype || "Privatstunde") + (sessStudents(s).length ? " – " + namesShort(sessStudents(s)) : "")
+  : (Store.get("courses", s.courseId) || {}).name || s.course || "Kurs";
+const courseName = sessTitle;
+const timeTxt = s => s.time ? `, ${s.time} Uhr` : "";
+function sameGroup(s, o){
+  if (isPriv(s)){ const mine = new Set(s.studentIds || []); return [...(o.studentIds || []), ...(o.present || [])].some(x => mine.has(x)); }
+  return !!s.courseId && o.courseId === s.courseId;
+}
 const itemObj = it => it.type === "combo" ? Store.get("combos", it.id) : Store.get("figures", it.id);
 const liveItems = s => (s.items || []).filter(it => itemObj(it));
 const coverPid = f => f && f.photos && f.photos[0] ? f.photos[0].id : null;
@@ -767,12 +709,12 @@ function thumbInner(obj, type){
   return pid ? `<img data-pid="${esc(pid)}" alt="">` : `<span class="ini" style="color:${l.c}">${initials(obj.name)}</span>`;
 }
 const cats = () => { const s = new Set(S().categories || DEFAULT_CATS); Store.all("figures").forEach(f => f.category && s.add(f.category)); return [...s]; };
-function timesInCourse(courseId, id, exceptSid){ return Store.all("sessions").filter(s => s.courseId === courseId && s.id !== exceptSid && (s.items || []).some(it => it.id === id)).length; }
+function timesInGroup(sess, id){ return Store.all("sessions").filter(o => o.id !== sess.id && sameGroup(sess, o) && (o.items || []).some(it => it.id === id)).length; }
 function prereqMissing(s, f, idx){
   const items = liveItems(s); const before = new Set(items.slice(0, idx).map(i => i.id));
   return (f.prereqs || []).map(pid => Store.get("figures", pid)).filter(Boolean).filter(p => {
     if (before.has(p.id)) return false;
-    return !Store.all("sessions").some(o => o.courseId === s.courseId && o.date < s.date && ((o.results || {})[p.id] || {}).s === "ok");
+    return !Store.all("sessions").some(o => sameGroup(s, o) && o.date < s.date && ((o.results || {})[p.id] || {}).s === "ok");
   }).map(p => p.name);
 }
 function whoCan(itemId){ const set = new Set(); Store.all("sessions").forEach(s => (((s.results || {})[itemId] || {}).who || []).forEach(x => set.add(x))); return [...set].map(id => Store.get("students", id)).filter(Boolean).sort(byName); }
@@ -780,7 +722,7 @@ function canList(sid){ const m = new Map(); for (const s of Store.all("sessions"
 const studentCourses = sid => courses().filter(c => (c.studentIds || []).includes(sid));
 
 /* ================= Zustand ================= */
-const ui = { tab:"rep", level:"alle", cat:"alle", q:"", selecting:false, selected:new Set(), cq:"", ctype:"alle",
+const ui = { tkind:"alle", tab:"rep", level:"alle", cat:"alle", q:"", selecting:false, selected:new Set(), cq:"", ctype:"alle",
   figId:null, comboId:null, sessId:null, courseId:null, studentId:null };
 
 /* ================= Darstellung ================= */
@@ -852,15 +794,18 @@ function sessRow(s, today){
   const res = s.results || {}; const ok = items.filter(it => (res[it.id] || {}).s === "ok").length; const any = items.some(it => (res[it.id] || {}).s);
   const th = items.slice(0, 5).map(it => `<span class="t">${thumbInner(itemObj(it), it.type)}</span>`).join("");
   return `<button class="sess${s.date === today ? " today" : ""}" data-action="open-sess" data-id="${esc(s.id)}">
-    <span class="date"><b>${d.getDate()}</b><span>${d.toLocaleDateString("de-DE", {weekday:"short"})}${s.date === today ? " · heute" : ""}</span></span>
-    <span><span class="course">${esc(courseName(s))}</span>${any ? `<span class="prog">${ok}/${items.length} geschafft</span>` : ""}<br>
+    <span class="date"><b>${d.getDate()}</b><span>${d.toLocaleDateString("de-DE", {weekday:"short"})}${s.date === today ? " · heute" : ""}</span>${s.time ? `<span>${esc(s.time)}</span>` : ""}</span>
+    <span>${isPriv(s) ? `<span class="tag priv">Privat</span> ` : ""}<span class="course">${esc(sessTitle(s))}</span>${any ? `<span class="prog">${ok}/${items.length} geschafft</span>` : ""}<br>
       <span class="sub-t">${items.length ? esc(objs.slice(0, 3).map(o => o.name).join(", ")) + (items.length > 3 ? " …" : "") : "Noch nichts eingeplant"}</span></span>
     <span class="thumbs" aria-hidden="true">${th}</span></button>`;
 }
 function renderTrain(){
-  const today = todayISO(); const all = sessionsSorted(); const up = all.filter(s => s.date >= today); const past = all.filter(s => s.date < today).reverse();
-  let html = `<div class="head"><h2>Trainingsplanung</h2><button class="btn primary" data-action="new-sess">+ Training planen</button></div>`;
-  if (!all.length) html += `<div class="empty"><p>Noch kein Training geplant. Lege ein Training mit Datum und Kurs an und wähle Figuren oder Kombos dafür aus.</p><button class="btn primary" data-action="new-sess">+ Training planen</button></div>`;
+  const today = todayISO(); const all = sessionsSorted().filter(s => ui.tkind === "alle" || (ui.tkind === "privat") === isPriv(s));
+  const up = all.filter(s => s.date >= today); const past = all.filter(s => s.date < today).reverse();
+  const chip = (v, t) => `<button class="chip" data-action="t-kind" data-v="${v}" aria-pressed="${ui.tkind === v}">${t}</button>`;
+  let html = `<div class="head"><h2>Trainingsplanung</h2><button class="btn" data-action="new-priv">+ Privatstunde</button><button class="btn primary" data-action="new-sess">+ Kurstraining</button></div>
+    ${Store.all("sessions").some(isPriv) ? `<div class="chips" style="margin:-.3rem 0 .4rem">${chip("alle", "Alle")}${chip("kurs", "Kurse")}${chip("privat", "Privatstunden")}</div>` : ""}`;
+  if (!all.length) html += `<div class="empty"><p>Noch nichts geplant. Lege ein Kurstraining oder eine Privatstunde an und wähle Figuren oder Kombos dafür aus.</p><button class="btn" data-action="new-priv">+ Privatstunde</button> <button class="btn primary" data-action="new-sess">+ Kurstraining</button></div>`;
   else {
     if (!up.length) html += `<div class="empty"><p>Keine kommenden Trainings geplant.</p></div>`;
     let m = ""; for (const s of up){ const mm = fmtMonth(s.date); if (mm !== m){ html += `<h3 class="month">${mm}</h3>`; m = mm; } html += sessRow(s, today); }
@@ -879,9 +824,9 @@ function renderKurse(){
     : `<div class="empty"><p>Lege deine Kurse an. Sie erscheinen dann beim Planen eines Trainings als Auswahl.</p></div>`;
   html += `<div class="head sub"><h2>Schülerinnen</h2><button class="btn primary" data-action="new-student">+ Neue Schülerin</button></div>`;
   html += ss.length ? ss.map(st => `<button class="row" data-action="open-student" data-id="${esc(st.id)}"><span class="avatar">${initials(st.name)}</span>
-      <span class="grow"><b>${esc(st.name)}</b><span class="sub-t">${esc(studentCourses(st.id).map(c => c.name).join(", ") || "Keinem Kurs zugeordnet")}</span></span>
+      <span class="grow"><b>${esc(st.name)}</b><span class="sub-t">${esc(studentCourses(st.id).map(c => c.name).join(", ") || (Store.all("sessions").some(s => isPriv(s) && (s.studentIds || []).includes(st.id)) ? "Privatstunden" : "Keinem Kurs zugeordnet"))}</span></span>
       <span class="sub-t">kann ${canList(st.id).size}</span></button>`).join("")
-    : `<div class="empty"><p>Noch keine Schülerinnen angelegt. Dann kannst du im Training festhalten, wer da war und wer welche Figur schon geschafft hat.</p></div>`;
+    : `<div class="empty"><p>Noch keine Schülerinnen angelegt. Sie können einem Kurs angehören oder nur Privatstunden haben. Im Training hältst du dann fest, wer welche Figur schon geschafft hat.</p></div>`;
   $("#app").innerHTML = html; renderSelbar();
 }
 
@@ -951,8 +896,8 @@ function openFigForm(id){
   ff = {id: f ? f.id : null, photos: f ? f.photos.map(p => ({...p})) : [], removed: [], prereqs: f ? (f.prereqs || []).slice() : []};
   $("#ffTitle").textContent = f ? "Figur bearbeiten" : "Neue Figur";
   $("#ffName").value = f ? f.name : ""; $("#ffNotes").value = f ? f.notes || "" : ""; $("#ffLink").value = f ? f.link || "" : "";
-  $("#ffCat").innerHTML = cats().map(c => `<option>${esc(c)}</option>`).join("");
-  $("#ffCat").value = f ? f.category : (ui.cat !== "alle" ? ui.cat : cats()[0]);
+  $("#ffCat").innerHTML = cats().map(c => `<option>${esc(c)}</option>`).join("") + `<option value="__new">＋ Neue Kategorie …</option>`;
+  $("#ffCat").value = f ? f.category : (ui.cat !== "alle" ? ui.cat : cats()[0]); $("#ffCatNew").value = ""; $("#ffCatNewWrap").hidden = true;
   setRadio("#ffLevel", f ? f.level : (ui.level !== "alle" ? ui.level : "leicht"));
   $("#ffDelete").hidden = !f; showErr("#ffErr", ""); $("#ffFiles").value = "";
   renderFFPhotos(); renderFFPre(); openDlg("#dlgFigForm");
@@ -963,17 +908,18 @@ function renderFFPhotos(){
     <div class="pa">${i ? `<button type="button" data-action="pf-front" data-i="${i}">Titelbild</button>` : ""}<button type="button" data-action="pf-del" data-i="${i}" aria-label="Foto entfernen">Entfernen</button></div></div>`).join("");
   hydrate($("#ffPhotos"));
 }
+$("#ffCat").addEventListener("change", () => { $("#ffCatNewWrap").hidden = $("#ffCat").value !== "__new"; if (!$("#ffCatNewWrap").hidden) $("#ffCatNew").focus(); });
 $("#ffPhotos").addEventListener("change", e => { const i = e.target.dataset.pi; if (i != null) ff.photos[+i].label = e.target.value; });
 function renderFFPre(){
   $("#ffPre").innerHTML = ff.prereqs.map(id => Store.get("figures", id)).filter(Boolean).map(f => `<button type="button" class="chip x" data-action="ff-pre-del" data-id="${esc(f.id)}" aria-label="${esc(f.name)} entfernen">${esc(f.name)}</button>`).join("") || `<span class="hint">Keine</span>`;
 }
 $("#ffFiles").addEventListener("change", async e => {
   const files = [...(e.target.files || [])]; e.target.value = ""; if (!files.length) return;
-  const st = S().photoStyle; let fail = 0;
+  let fail = 0;
   for (let k = 0; k < files.length; k++){
     toast(files.length > 1 ? `Foto ${k + 1} von ${files.length} wird vorbereitet …` : "Foto wird vorbereitet …", 8000);
-    try { const orig = await prepareOriginal(files[k]); const styled = st !== "original" ? await stylize(orig, st) : null;
-      ff.photos.push({id: uid(), label: ff.photos.length ? "Position" : "Position", isNew: true, orig, styled, style: st, url: URL.createObjectURL(styled || orig)});
+    try { const orig = await prepareOriginal(files[k]);
+      ff.photos.push({id: uid(), label: "Position", isNew: true, orig, url: URL.createObjectURL(orig)});
     } catch(err){ fail++; }
     renderFFPhotos();
   }
@@ -983,12 +929,15 @@ $("#dlgFigForm").addEventListener("close", () => { if (ff) ff.photos.forEach(p =
 $("#figForm").addEventListener("submit", async e => {
   e.preventDefault();
   const name = $("#ffName").value.trim(); if (!name){ showErr("#ffErr", "Bitte gib der Figur einen Namen."); $("#ffName").focus(); return; }
+  let category = $("#ffCat").value;
+  if (category === "__new"){ category = $("#ffCatNew").value.trim(); if (!category){ showErr("#ffErr", "Bitte einen Namen für die neue Kategorie eingeben."); $("#ffCatNew").focus(); return; }
+    const ex = cats().find(c => c.toLowerCase() === category.toLowerCase()); if (ex) category = ex; else await saveSettings({categories: [...(S().categories || []), category]}); }
   const old = ff.id ? Store.get("figures", ff.id) : null;
   $("#ffSave").disabled = true;
   try {
-    for (const p of ff.photos.filter(p => p.isNew)) await Store.putPhoto({id: p.id, orig: await toBuf(p.orig), styled: p.styled ? await toBuf(p.styled) : null, style: p.styled ? p.style : "original"});
+    for (const p of ff.photos.filter(p => p.isNew)) await Store.putPhoto({id: p.id, orig: await toBuf(p.orig), styled: null, style: "original"});
     for (const id of ff.removed) await Store.delPhoto(id);
-    const f = {...(old || {}), id: old ? old.id : uid(), name, level: radioVal("#ffLevel") || "leicht", category: $("#ffCat").value,
+    const f = {...(old || {}), id: old ? old.id : uid(), name, level: radioVal("#ffLevel") || "leicht", category,
       notes: $("#ffNotes").value.trim(), link: normLink($("#ffLink").value), photos: ff.photos.map(p => ({id: p.id, label: p.label})),
       prereqs: ff.prereqs.filter(x => x !== (old && old.id)), created: old ? old.created || Date.now() : Date.now(), updated: Date.now()};
     await Store.put("figures", f);
@@ -1067,14 +1016,15 @@ $("#cfDelete").addEventListener("click", async () => {
 /* ================= Training ansehen ================= */
 function fillSession(){
   const s = Store.get("sessions", ui.sessId); if (!s){ $("#dlgSess").close(); return; }
-  const items = liveItems(s); const course = Store.get("courses", s.courseId);
+  const items = liveItems(s); const course = isPriv(s) ? null : Store.get("courses", s.courseId);
   const cStudents = course ? (course.studentIds || []).map(id => Store.get("students", id)).filter(Boolean).sort(byName) : [];
   const present = (s.present || []).filter(id => Store.get("students", id));
-  const whoPool = present.length ? present.map(id => Store.get("students", id)).sort(byName) : cStudents;
+  const whoPool = isPriv(s) ? sessStudents(s) : present.length ? present.map(id => Store.get("students", id)).sort(byName) : cStudents;
   const total = (+((s.warm || {}).min) || 0) + (+((s.cool || {}).min) || 0) + items.reduce((a, it) => a + (+it.min || 0), 0);
-  $("#sdTitle").innerHTML = `${esc(courseName(s))}<small>${esc(fmtLong(s.date))}${total ? ` · Ablauf ${total} Min.` : ""}</small>`;
+  $("#sdTitle").innerHTML = `${esc(isPriv(s) ? s.ptype || "Privatstunde" : sessTitle(s))}<small>${esc(fmtLong(s.date) + timeTxt(s))}${total ? ` · Ablauf ${total} Min.` : ""}</small>`;
   let html = s.note ? `<div class="sess-note">${esc(s.note)}</div>` : "";
-  if (cStudents.length) html += `<div class="present"><span class="flabel">Anwesend (${present.length}/${cStudents.length})</span><div class="chips">${cStudents.map(st => `<button class="chip" data-action="sd-present" data-sid="${esc(st.id)}" aria-pressed="${present.includes(st.id)}">${esc(st.name)}</button>`).join("")}</div></div>`;
+  if (isPriv(s)) html += `<div class="present"><span class="flabel">Schülerinnen</span>${whoPool.length ? `<div class="chips">${whoPool.map(st => `<button class="chip" data-action="open-student" data-id="${esc(st.id)}" aria-pressed="true">${esc(st.name)}</button>`).join("")}</div>` : `<p class="muted" style="margin:0">Noch niemand eingetragen – über „Bearbeiten“ hinzufügen.</p>`}</div>`;
+  else if (cStudents.length) html += `<div class="present"><span class="flabel">Anwesend (${present.length}/${cStudents.length})</span><div class="chips">${cStudents.map(st => `<button class="chip" data-action="sd-present" data-sid="${esc(st.id)}" aria-pressed="${present.includes(st.id)}">${esc(st.name)}</button>`).join("")}</div></div>`;
   if (s.warm && (s.warm.text || s.warm.min)) html += `<div class="block"><b>Aufwärmen${s.warm.min ? ` · ${+s.warm.min} Min.` : ""}</b>${s.warm.text ? `<p>${esc(s.warm.text)}</p>` : ""}</div>`;
   if (!items.length) html += `<div class="empty" style="margin:.6rem 0"><p>Für dieses Training ist noch nichts eingeplant.</p><button class="btn primary" data-action="sd-add">+ Figuren oder Kombos hinzufügen</button></div>`;
   else html += `<ol class="plan-list">${items.map((it, i) => { const o = itemObj(it); const l = LV[o.level] || LEVELS[0]; const r = (s.results || {})[it.id] || {};
@@ -1112,31 +1062,55 @@ $("#sdBody").addEventListener("change", e => {
 });
 
 /* ================= Training anlegen/ändern ================= */
-let sf = {edit:null, copy:null};
-function openSessForm(id, copyFrom){
+let sf = {edit:null, copy:null, students:new Set(), pending:null, ptypeTouched:false};
+function openSessForm(id, copyFrom, opts = {}){
   const s = id ? Store.get("sessions", id) : null; const c = copyFrom ? Store.get("sessions", copyFrom) : null; const src = s || c;
-  sf = {edit: s ? s.id : null, copy: c ? c.id : null};
-  $("#sfTitle").textContent = s ? "Training bearbeiten" : c ? "Training kopieren" : "Training planen";
+  sf = {edit: s ? s.id : null, copy: c ? c.id : null, students: new Set(src ? src.studentIds || [] : []), pending: opts.items || null, ptypeTouched: !!src};
+  const kind = src ? src.kind || "kurs" : opts.kind || "kurs";
+  $("#sfTitle").textContent = s ? (isPriv(s) ? "Privatstunde bearbeiten" : "Training bearbeiten") : c ? "Kopieren" : kind === "privat" ? "Privatstunde planen" : "Kurstraining planen";
+  setRadio("#sfKind", kind); $("#sfTime").value = src ? src.time || "" : "";
+  $("#sfPtype").innerHTML = [...new Set([...PTYPES, ...(src && src.ptype ? [src.ptype] : [])])].map(t => `<option>${esc(t)}</option>`).join("");
+  $("#sfPtype").value = src && src.ptype ? src.ptype : "Einzelstunde"; $("#sfNewStudent").value = "";
+  renderSfStudents(); syncKind();
   $("#sfDate").value = s ? s.date : todayISO();
   courseSelect("#sfCourse", src ? src.courseId : (courses()[0] || {}).id); $("#sfNewWrap").hidden = $("#sfCourse").value !== "__new"; $("#sfNew").value = "";
   $("#sfWarm").value = src && src.warm ? src.warm.text || "" : ""; $("#sfWarmMin").value = src && src.warm && src.warm.min ? src.warm.min : "";
   $("#sfCool").value = src && src.cool ? src.cool.text || "" : ""; $("#sfCoolMin").value = src && src.cool && src.cool.min ? src.cool.min : "";
   $("#sfNote").value = src ? src.note || "" : ""; showErr("#sfErr", ""); openDlg("#dlgSessForm");
 }
+function syncKind(){ const p = radioVal("#sfKind") === "privat"; $("#sfKursBox").hidden = p; $("#sfPrivBox").hidden = !p; }
+$("#sfKind").addEventListener("change", syncKind);
+$("#sfPtype").addEventListener("change", () => { sf.ptypeTouched = true; });
+function renderSfStudents(){
+  const ss = students();
+  $("#sfStudents").innerHTML = ss.length ? ss.map(st => `<button type="button" class="chip" data-action="sf-student" data-sid="${esc(st.id)}" aria-pressed="${sf.students.has(st.id)}">${esc(st.name)}</button>`).join("") : `<span class="hint">Noch keine Schülerinnen – einfach unten hinzufügen.</span>`;
+  if (!sf.ptypeTouched && sf.students.size) $("#sfPtype").value = sf.students.size > 1 ? "Gruppenstunde" : "Einzelstunde";
+}
+async function sfAddStudent(){
+  const name = $("#sfNewStudent").value.trim(); if (!name) return;
+  let st = students().find(x => x.name.toLowerCase() === name.toLowerCase());
+  if (!st){ st = {id: uid(), name, notes: ""}; try { await Store.put("students", st); } catch(err){ saveError(); return; } }
+  sf.students.add(st.id); $("#sfNewStudent").value = ""; renderSfStudents(); $("#sfNewStudent").focus();
+}
+$("#sfNewStudent").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); sfAddStudent(); } });
 $("#sfCourse").addEventListener("change", () => { $("#sfNewWrap").hidden = $("#sfCourse").value !== "__new"; if (!$("#sfNewWrap").hidden) $("#sfNew").focus(); });
 $("#sessForm").addEventListener("submit", async e => {
   e.preventDefault(); const date = $("#sfDate").value;
   if (!date){ showErr("#sfErr", "Bitte ein Datum wählen."); return; }
-  const courseId = await resolveCourse("#sfCourse", "#sfNew"); if (!courseId){ showErr("#sfErr", "Bitte einen Kurs wählen oder einen Namen für den neuen Kurs eingeben."); return; }
+  const kind = radioVal("#sfKind") || "kurs"; let courseId = null;
+  if (kind === "kurs"){ courseId = await resolveCourse("#sfCourse", "#sfNew"); if (!courseId){ showErr("#sfErr", "Bitte einen Kurs wählen oder einen Namen für den neuen Kurs eingeben."); return; } }
+  const extra = {kind, time: $("#sfTime").value || "", courseId, ptype: kind === "privat" ? $("#sfPtype").value : "", studentIds: kind === "privat" ? [...sf.students] : []};
   const warm = {text: $("#sfWarm").value.trim(), min: parseInt($("#sfWarmMin").value, 10) || 0}, cool = {text: $("#sfCool").value.trim(), min: parseInt($("#sfCoolMin").value, 10) || 0};
   const old = sf.edit ? Store.get("sessions", sf.edit) : null; const src = sf.copy ? Store.get("sessions", sf.copy) : null;
-  const s = old ? {...old, date, courseId, warm, cool, note: $("#sfNote").value.trim()}
-    : {id: uid(), date, courseId, warm, cool, note: $("#sfNote").value.trim(), items: src ? liveItems(src).map(it => ({...it})) : [], results: {}, present: [], created: Date.now()};
+  const s = old ? {...old, ...extra, date, warm, cool, note: $("#sfNote").value.trim()}
+    : {id: uid(), ...extra, date, warm, cool, note: $("#sfNote").value.trim(), items: src ? liveItems(src).map(it => ({...it})) : (sf.pending || []).map(it => ({type: it.type, id: it.id, min: 0})), results: {}, present: [], created: Date.now()};
   $("#sfSave").disabled = true;
   try { await Store.put("sessions", s); $("#dlgSessForm").close(); render();
     if (old){ toast("Training gespeichert"); fillSession(); }
-    else if (src){ toast("Training kopiert"); openSession(s.id); }
-    else { toast("Training angelegt"); openSession(s.id); openPicker("session"); }
+    else if (src){ toast("Kopiert"); openSession(s.id); }
+    else if (sf.pending){ $("#dlgAssign").close(); $("#dlgFigView").close(); $("#dlgComboView").close(); ui.selected.clear(); ui.selecting = false; render();
+      toast(`Hinzugefügt: ${sessTitle(s)}, ${fmtShort(s.date)}`); }
+    else { toast(isPriv(s) ? "Privatstunde angelegt" : "Training angelegt"); openSession(s.id); openPicker("session"); }
   } catch(err){ saveError(); } finally { $("#sfSave").disabled = false; }
 });
 
@@ -1155,18 +1129,19 @@ function renderPicker(){
   const chips = [];
   if (pk.mode === "session") chips.push(`<button class="chip" data-action="pk-tab" data-v="fig" aria-pressed="${pk.tab === "fig"}">Figuren</button><button class="chip" data-action="pk-tab" data-v="combo" aria-pressed="${pk.tab === "combo"}">Kombos</button>`);
   chips.push(...[["alle", "Alle"], ...LEVELS.map(l => [l.id, l.label])].map(([v, t]) => `<button class="chip" data-action="pk-level" data-v="${v}" aria-pressed="${pk.level === v}">${t}</button>`));
-  if (s && s.courseId) chips.push(`<button class="chip" data-action="pk-new" aria-pressed="${pk.onlyNew}">Nur neue im Kurs</button>`);
+  const grp = s && (isPriv(s) ? (s.studentIds || []).length : s.courseId);
+  if (grp) chips.push(`<button class="chip" data-action="pk-new" aria-pressed="${pk.onlyNew}">${isPriv(s) ? "Nur neue für diese Schülerinnen" : "Nur neue im Kurs"}</button>`);
   $("#pkChips").innerHTML = chips.join("");
   const q = $("#pkQ").value.trim().toLowerCase();
   const isCombo = pk.tab === "combo";
   let list = (isCombo ? combos() : figs()).filter(o => (pk.level === "alle" || o.level === pk.level) && (!q || o.name.toLowerCase().includes(q)));
   if (pk.mode === "prereq") list = list.filter(o => o.id !== ff.id);
-  const count = o => s && s.courseId ? timesInCourse(s.courseId, o.id, s.id) : null;
+  const count = o => grp ? timesInGroup(s, o.id) : null;
   if (pk.onlyNew) list = list.filter(o => count(o) === 0);
   const type = isCombo ? "combo" : "fig";
   const selCount = k => pk.sel.filter(x => x === k).length;
   $("#pkGrid").innerHTML = list.length ? list.map(o => { const k = type + ":" + o.id; const n = count(o);
-    const badge = n == null ? "" : n ? `<span class="badge">${n}× im Kurs</span>` : `<span class="badge new">neu im Kurs</span>`;
+    const badge = n == null ? "" : n ? `<span class="badge">${n}× dran</span>` : `<span class="badge new">neu</span>`;
     const opts = {action: "pk-toggle", selected: selCount(k) > 0, selectable: true, showLevel: true, compact: true, badge};
     return isCombo ? comboCard(o, opts) : figCard(o, opts); }).join("")
     : `<p class="hint" style="grid-column:1/-1">${(isCombo ? Store.all("combos") : Store.all("figures")).length ? "Keine passenden Einträge." : isCombo ? "Lege zuerst Kombos an." : "Lege zuerst Figuren im Repertoire an."}</p>`;
@@ -1192,20 +1167,16 @@ let asItems = [];
 function openAssign(items){
   asItems = items; const today = todayISO(); const up = sessionsSorted().filter(s => s.date >= today);
   $("#asTitle").textContent = items.length === 1 ? `„${itemObj(items[0]).name}“ zu Training hinzufügen` : `${items.length} Einträge zu Training hinzufügen`;
-  $("#asList").innerHTML = up.map((s, i) => `<label><input type="radio" name="as" value="${esc(s.id)}" ${i === 0 ? "checked" : ""}><span><b>${esc(courseName(s))}</b><small>${esc(fmtLong(s.date))} · ${liveItems(s).length} eingeplant</small></span></label>`).join("")
-    + `<label><input type="radio" name="as" value="__new" ${up.length ? "" : "checked"}><span><b>Neues Training anlegen</b></span></label>`;
-  $("#asDate").value = todayISO(); courseSelect("#asCourse", (courses()[0] || {}).id); $("#asNewWrap").hidden = $("#asCourse").value !== "__new"; $("#asNewName").value = "";
-  showErr("#asErr", ""); syncAssign(); openDlg("#dlgAssign");
+  $("#asList").innerHTML = up.map((s, i) => `<label><input type="radio" name="as" value="${esc(s.id)}" ${i === 0 ? "checked" : ""}><span><b>${esc(sessTitle(s))}</b><small>${esc(fmtLong(s.date) + timeTxt(s))} · ${liveItems(s).length} eingeplant</small></span></label>`).join("")
+    + `<label><input type="radio" name="as" value="__kurs" ${up.length ? "" : "checked"}><span><b>Neues Kurstraining …</b></span></label>`
+    + `<label><input type="radio" name="as" value="__privat"><span><b>Neue Privatstunde …</b></span></label>`;
+  showErr("#asErr", ""); openDlg("#dlgAssign");
 }
-const syncAssign = () => { $("#asNew").hidden = radioVal("#asList") !== "__new"; };
-$("#asList").addEventListener("change", syncAssign);
-$("#asCourse").addEventListener("change", () => { $("#asNewWrap").hidden = $("#asCourse").value !== "__new"; });
 $("#assignForm").addEventListener("submit", async e => {
   e.preventDefault(); const v = radioVal("#asList"); let s;
-  if (v === "__new"){ const date = $("#asDate").value; const courseId = await resolveCourse("#asCourse", "#asNewName");
-    if (!date || !courseId){ showErr("#asErr", "Bitte Datum und Kurs angeben."); return; }
-    s = {id: uid(), date, courseId, items: [], results: {}, present: [], note: "", created: Date.now()};
-  } else { const o = Store.get("sessions", v); s = {...o, items: liveItems(o).map(it => ({...it}))}; }
+  if (!v){ showErr("#asErr", "Bitte eine Auswahl treffen."); return; }
+  if (v === "__kurs" || v === "__privat"){ openSessForm(null, null, {kind: v.slice(2), items: asItems}); return; }
+  const o = Store.get("sessions", v); s = {...o, items: liveItems(o).map(it => ({...it}))};
   asItems.forEach(it => { if (!s.items.some(x => x.id === it.id)) s.items.push({type: it.type, id: it.id, min: 0}); });
   try { await Store.put("sessions", s); $("#dlgAssign").close(); $("#dlgFigView").close(); $("#dlgComboView").close();
     ui.selected.clear(); ui.selecting = false; render(); toast(`Hinzugefügt: ${courseName(s)}, ${fmtShort(s.date)}`);
@@ -1253,8 +1224,10 @@ function openStudent(id){
   $("#stCourses").innerHTML = courses().length ? courses().map(c => `<button type="button" class="chip" data-action="st-toggle" data-cid="${esc(c.id)}" aria-pressed="${stf.sel.has(c.id)}">${esc(c.name)}</button>`).join("") : `<span class="hint">Noch keine Kurse angelegt.</span>`;
   let info = "";
   if (st){ const can = [...canList(st.id).entries()].map(([iid, d]) => ({o: Store.get("figures", iid) || Store.get("combos", iid), d})).filter(x => x.o).sort((a, b) => b.d.localeCompare(a.d));
-    const att = Store.all("sessions").filter(s => (s.present || []).includes(st.id)).length;
-    info = `<p class="muted">Anwesend in ${att} ${att === 1 ? "Training" : "Trainings"}.</p><h4 class="sec-t">Kann schon (${can.length})</h4>` + (can.length ? `<ul class="hist">${can.map(x => `<li><span class="st ok">${esc(fmtShort(x.d))}</span><span><button type="button" class="lnk" data-action="${x.o.steps ? "combo" : "fig"}" data-id="${esc(x.o.id)}">${esc(x.o.name)}</button></span></li>`).join("")}</ul>` : `<p class="muted">Noch nichts eingetragen. Im Training unter „Geschafft haben“ ankreuzen.</p>`); }
+    const att = Store.all("sessions").filter(s => (s.present || []).includes(st.id) && !isPriv(s)).length;
+    const priv = Store.all("sessions").filter(s => isPriv(s) && (s.studentIds || []).includes(st.id)).sort((a, b) => b.date.localeCompare(a.date));
+    info = `<p class="muted">Anwesend in ${att} ${att === 1 ? "Kurstraining" : "Kurstrainings"}${priv.length ? `, ${priv.length} ${priv.length === 1 ? "Privatstunde" : "Privatstunden"}` : ""}.</p>`
+      + (priv.length ? `<h4 class="sec-t">Privatstunden</h4><ul class="hist">${priv.slice(0, 10).map(s => `<li><span><button type="button" class="lnk" data-action="goto-sess" data-id="${esc(s.id)}">${esc(fmtLong(s.date) + timeTxt(s))}</button> <span class="muted">· ${esc(s.ptype || "Privatstunde")}</span></span></li>`).join("")}</ul>` : "") + `<h4 class="sec-t">Kann schon (${can.length})</h4>` + (can.length ? `<ul class="hist">${can.map(x => `<li><span class="st ok">${esc(fmtShort(x.d))}</span><span><button type="button" class="lnk" data-action="${x.o.steps ? "combo" : "fig"}" data-id="${esc(x.o.id)}">${esc(x.o.name)}</button></span></li>`).join("")}</ul>` : `<p class="muted">Noch nichts eingetragen. Im Training unter „Geschafft haben“ ankreuzen.</p>`); }
   $("#stInfo").innerHTML = info; openDlg("#dlgStudent");
 }
 $("#studentForm").addEventListener("submit", async e => {
@@ -1270,8 +1243,8 @@ $("#stDelete").addEventListener("click", async () => {
   const st = Store.get("students", stf.id); if (!st) return;
   if (!await confirmBox("Schülerin löschen?", `${st.name} wird aus allen Kursen und Trainingseinträgen entfernt.`)) return;
   try { for (const c of courses()) if ((c.studentIds || []).includes(st.id)) await Store.put("courses", {...c, studentIds: c.studentIds.filter(x => x !== st.id)});
-    for (const s of Store.all("sessions")){ let ch = false; const n = {...s, present: (s.present || []).filter(x => x !== st.id), results: JSON.parse(JSON.stringify(s.results || {}))};
-      if (n.present.length !== (s.present || []).length) ch = true;
+    for (const s of Store.all("sessions")){ let ch = false; const n = {...s, present: (s.present || []).filter(x => x !== st.id), studentIds: (s.studentIds || []).filter(x => x !== st.id), results: JSON.parse(JSON.stringify(s.results || {}))};
+      if (n.present.length !== (s.present || []).length || n.studentIds.length !== (s.studentIds || []).length) ch = true;
       Object.values(n.results).forEach(r => { if ((r.who || []).includes(st.id)){ r.who = r.who.filter(x => x !== st.id); ch = true; } });
       if (ch) await Store.put("sessions", n); }
     await Store.del("students", st.id); $("#dlgStudent").close(); render(); toast("Gelöscht");
@@ -1279,24 +1252,14 @@ $("#stDelete").addEventListener("click", async () => {
 });
 
 /* ================= Einstellungen & Sicherung ================= */
-function openSettings(){
-  const st = S().photoStyle;
-  $("#setStyles").innerHTML = Object.entries(STYLES).map(([k, [t, d]]) => `<label class="style-opt"><input type="radio" name="pstyle" value="${k}" ${k === st ? "checked" : ""}> <b>${t}</b><br><span class="muted">${d}</span></label>`).join("");
-  renderCats(); openDlg("#dlgSettings");
-}
+function openSettings(){ renderCats(); openDlg("#dlgSettings"); }
 function renderCats(){ $("#setCats").innerHTML = (S().categories || []).map(c => `<button class="chip x" data-action="cat-del" data-v="${esc(c)}" aria-label="${esc(c)} entfernen">${esc(c)}</button>`).join(""); }
-$("#setStyles").addEventListener("change", async e => {
-  const v = e.target.value; const n = (await Store.photoIds()).length;
-  if (n && !await confirmBox("Bildstil ändern?", `Alle ${n} Fotos werden in den Stil „${STYLES[v][0]}“ umgewandelt. Das dauert einen Moment. Die Originale bleiben erhalten.`, "Umwandeln")){
-    document.querySelectorAll('#setStyles input').forEach(i => i.checked = i.value === S().photoStyle); return; }
-  await saveSettings({photoStyle: v}); restyleAll(true);
-});
 const blobToURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
 async function doExport(){
   toast("Sicherung wird erstellt …", 8000);
   try {
     const photos = []; for (const id of await Store.photoIds()){ const r = await Store.getPhoto(id); if (!r) continue;
-      photos.push({id, style: r.style, orig: await blobToURL(jpg(r.orig)), styled: r.styled ? await blobToURL(jpg(r.styled)) : null}); }
+      photos.push({id, orig: await blobToURL(jpg(r.orig))}); }
     const data = JSON.stringify({app: "poleplaner", version: 2, exported: new Date().toISOString(), ...Object.fromEntries(COLLS.map(c => [c, Store.all(c)])), photos});
     const name = `poleplaner-sicherung-${todayISO()}.json`; const file = new File([data], name, {type: "application/json"});
     if (navigator.canShare && navigator.canShare({files: [file]})){
@@ -1314,8 +1277,8 @@ $("#importFile").addEventListener("change", async e => {
     if (!await confirmBox("Sicherung importieren?", `${nF} Figuren und ${nS} Trainings werden übernommen. Einträge mit gleicher Kennung werden überschrieben.`, "Importieren")) return;
     toast("Sicherung wird eingespielt …", 10000);
     for (const c of COLLS) for (const o of (d[c] || [])) if (o && o.id) await Store.put(c, o);
-    for (const p of (d.photos || [])) if (p && p.id && p.orig){ await Store.putPhoto({id: p.id, style: p.style || "original", orig: await (await fetch(p.orig)).arrayBuffer(), styled: p.styled ? await (await fetch(p.styled)).arrayBuffer() : null}); dropPhoto(p.id); }
-    await migrate(); clearPhotoCache(); render(); toast("Sicherung importiert"); restyleAll(true);
+    for (const p of (d.photos || [])) if (p && p.id && p.orig){ await Store.putPhoto({id: p.id, style: "original", orig: await (await fetch(p.orig)).arrayBuffer(), styled: null}); dropPhoto(p.id); }
+    await migrate(); clearPhotoCache(); render(); toast("Sicherung importiert");
   } catch(err){ toast(err && err.message === "format" ? "Diese Datei ist keine PolePlaner-Sicherung." : "Import hat nicht geklappt."); }
 });
 
@@ -1356,7 +1319,7 @@ function renderRun(){
       ${f.notes ? `<div class="notes">${esc(f.notes)}</div>` : ""}${r.n ? `<div class="sess-note">${esc(r.n)}</div>` : ""}`; }
   else { const c = Store.get("combos", step.id); body = `<h2>${esc(c.name)}</h2>${c.music ? `<p class="muted">♪ ${esc(isLink(c.music) ? "Musik-Link in der Kombo" : c.music)}</p>` : ""}${stepsView((c.steps || []).filter(x => Store.get("figures", x.figId)))}${c.notes ? `<div class="notes">${esc(c.notes)}</div>` : ""}`; }
   const r = step.kind === "fig" || step.kind === "combo" ? ((s.results || {})[step.id] || {}) : null;
-  $("#runBox").innerHTML = `<div class="run-top"><span class="cnt">${run.i + 1} / ${n}</span><span class="crs">${esc(courseName(s))} · ${esc(fmtShort(s.date))}</span><button class="btn small" data-action="run-close">Beenden</button></div>
+  $("#runBox").innerHTML = `<div class="run-top"><span class="cnt">${run.i + 1} / ${n}</span><span class="crs">${esc(sessTitle(s))} · ${esc(fmtShort(s.date))}</span><button class="btn small" data-action="run-close">Beenden</button></div>
     <div class="run-bar"><i style="width:${Math.round(((run.i + 1) / n) * 100)}%"></i></div>
     <div class="run-body">${body}</div>
     <div class="run-timer"><span class="time" id="runTime">${step.min ? mmss(step.min * 60) : "00:00"}</span><button class="btn primary" id="runToggle" data-action="run-toggle">Start</button><button class="btn ghost" data-action="run-reset" aria-label="Zeit zurücksetzen">↺</button></div>
@@ -1387,7 +1350,7 @@ document.addEventListener("click", async e => {
     case "sel-assign": if (ui.selected.size) openAssign([...ui.selected].map(x => ({type: "fig", id: x}))); break;
     case "fv-edit": $("#dlgFigView").close(); openFigForm(ui.figId); break;
     case "fv-plan": openAssign([{type: "fig", id: ui.figId}]); break;
-    case "goto-sess": e.preventDefault(); ["#dlgFigView", "#dlgComboView", "#dlgCourse"].forEach(d => $(d).open && $(d).close()); openSession(id); break;
+    case "goto-sess": e.preventDefault(); ["#dlgFigView", "#dlgComboView", "#dlgCourse", "#dlgStudent"].forEach(d => $(d).open && $(d).close()); openSession(id); break;
     case "pf-front": { const i = +el.dataset.i; const [p] = ff.photos.splice(i, 1); ff.photos.unshift(p); renderFFPhotos(); break; }
     case "pf-del": { const i = +el.dataset.i; const [p] = ff.photos.splice(i, 1); if (!p.isNew) ff.removed.push(p.id); renderFFPhotos(); break; }
     case "ff-pre": openPicker("prereq"); break;
@@ -1400,13 +1363,17 @@ document.addEventListener("click", async e => {
     case "cf-up": { const i = +el.dataset.i; [cf.steps[i-1], cf.steps[i]] = [cf.steps[i], cf.steps[i-1]]; renderCFSteps(); break; }
     case "cf-down": { const i = +el.dataset.i; [cf.steps[i+1], cf.steps[i]] = [cf.steps[i], cf.steps[i+1]]; renderCFSteps(); break; }
     case "cf-del": cf.steps.splice(+el.dataset.i, 1); renderCFSteps(); break;
-    case "new-sess": openSessForm(null); break;
+    case "new-sess": openSessForm(null, null, {kind: "kurs"}); break;
+    case "new-priv": openSessForm(null, null, {kind: "privat"}); break;
+    case "t-kind": ui.tkind = el.dataset.v; renderTrain(); break;
+    case "sf-student": { const sid = el.dataset.sid; sf.students.has(sid) ? sf.students.delete(sid) : sf.students.add(sid); renderSfStudents(); break; }
+    case "sf-add-student": sfAddStudent(); break;
     case "open-sess": openSession(id); break;
     case "sd-edit": openSessForm(ui.sessId); break;
     case "sd-copy": openSessForm(null, ui.sessId); break;
     case "sd-add": openPicker("session"); break;
     case "sd-delete": { const s = Store.get("sessions", ui.sessId); if (!s) break;
-      if (!await confirmBox("Training löschen?", `${courseName(s)} am ${fmtLong(s.date)} wird gelöscht. Figuren und Kombos bleiben erhalten.`)) break;
+      if (!await confirmBox("Training löschen?", `${sessTitle(s)} am ${fmtLong(s.date)} wird gelöscht. Figuren und Kombos bleiben erhalten.`)) break;
       try { await Store.del("sessions", s.id); $("#dlgSess").close(); render(); toast("Training gelöscht"); } catch(err){ saveError(); } break; }
     case "sd-up": { const i = +el.dataset.i; patchSession(s => { [s.items[i-1], s.items[i]] = [s.items[i], s.items[i-1]]; return s; }); break; }
     case "sd-down": { const i = +el.dataset.i; patchSession(s => { [s.items[i+1], s.items[i]] = [s.items[i], s.items[i+1]]; return s; }); break; }
@@ -1455,7 +1422,7 @@ document.querySelectorAll("dialog").forEach(d => d.addEventListener("click", e =
   try { await migrate(); } catch(e){}
   render();
   try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch(e){}
-  restyleAll(true);
+  dropStyled();
 })();
 if ("serviceWorker" in navigator && location.protocol === "https:" && !window.claude){
   window.addEventListener("load", () => {
