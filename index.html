@@ -146,6 +146,18 @@ select.sel{padding:.5rem .7rem;border:1px solid var(--line);border-radius:12px;b
 .trans{margin:0 0 0 30px;padding:.15rem 0 .15rem 1.2rem;border-left:2px dashed var(--rose);color:var(--muted);font-size:.9rem;white-space:pre-wrap}
 .trans input{width:100%;padding:.4rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
 
+/* Wischen zum Löschen */
+.sw{position:relative;overflow:hidden;border-radius:14px;margin-bottom:.6rem}
+.sw > .sw-main{position:relative;z-index:1;transition:transform .2s ease;touch-action:pan-y;-webkit-user-select:none;user-select:none;background:var(--bg);border-radius:14px}
+dialog .sw > .sw-main{background:var(--surface)}
+.sw.drag > .sw-main{transition:none}
+.sw-del{position:absolute;inset:0 0 0 auto;width:110px;border:0;background:var(--hard);color:#fff;font-weight:700;padding-left:14px;border-radius:0 14px 14px 0}
+.sw .sess,.sw .row{margin-bottom:0}
+.course-grid .sw{margin-bottom:0}
+.swipe-hint{color:var(--muted);font-size:.82rem;margin:.4rem 0 0}
+.plan-list > li,.steps > li{list-style:none}
+.steps .sw{margin-bottom:0;border-radius:10px}
+
 /* Auswahlleiste */
 .selbar{position:fixed;left:50%;translate:-50% 0;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:6;background:var(--ink);color:var(--surface);border-radius:16px;padding:.6rem .6rem .6rem 1rem;display:flex;align-items:center;gap:.8rem;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100% - 2rem)}
 .selbar .btn{border-color:transparent}
@@ -189,12 +201,13 @@ dialog{border:0;padding:0;border-radius:18px;background:var(--surface);color:var
 dialog::backdrop{background:rgba(40,36,37,.5)}
 .dlg{display:flex;flex-direction:column;max-height:calc(100vh - 2rem)}
 .dlg-head{display:flex;align-items:center;gap:.6rem;padding:1rem 1.1rem;border-bottom:1px solid var(--line)}
-.dlg-head h3{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0 auto 0 0;line-height:1.2}
+.dlg-head h3{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0 auto 0 0;line-height:1.2;min-width:0}
 .dlg-head h3 small{display:block;font-family:var(--body);font-size:.92rem;color:var(--muted);margin-top:.15rem}
 .dlg-body{padding:1rem 1.1rem;overflow:auto}
 .dlg-foot{display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap;padding:.8rem 1.1rem;border-top:1px solid var(--line)}
 .dlg-foot .left{margin-right:auto}
-.x{border:0;background:var(--surface-2);width:36px;height:36px;border-radius:50%;font-size:1.2rem;line-height:1;flex:0 0 auto}
+.back{border:0;background:none;color:var(--accent);font-weight:700;padding:.35rem .5rem .35rem .1rem;margin-left:-.1rem;flex:0 0 auto;font-size:1rem}
+.dlg-head h3{order:2}
 @media (max-width:600px){
   dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:18px 18px 0 0;max-height:94%}
   .dlg{max-height:94vh}
@@ -247,7 +260,9 @@ a.lnk,.lnk{color:inherit;background:none;border:0;padding:0;text-decoration:unde
 .warn{background:var(--part-bg);color:var(--mid);border-radius:8px;padding:.3rem .55rem;font-size:.85rem;font-weight:600;margin-top:.4rem}
 
 .plan-list{list-style:none;margin:0;padding:0;counter-reset:n}
-.plan-item{display:grid;grid-template-columns:28px 92px minmax(0,1fr) auto;gap:.8rem;align-items:start;padding:.9rem 0;border-bottom:1px solid var(--line);counter-increment:n}
+.plan-list .sw,.plan-list .sw > .sw-main,.plan-list .sw-del{margin-bottom:0;border-radius:0}
+.plan-list > li .plan-item{counter-increment:n}
+.plan-item{display:grid;grid-template-columns:28px 92px minmax(0,1fr) auto;gap:.8rem;align-items:start;padding:.9rem 0;border-bottom:1px solid var(--line)}
 .plan-item::before{content:counter(n);font-family:var(--display);font-size:1.3rem;color:var(--muted);text-align:center;padding-top:.2rem}
 .plan-item .pimg{aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--surface-2);display:grid;place-items:center;border:0;padding:0}
 .plan-item .pimg img{width:100%;height:100%;object-fit:cover}
@@ -257,8 +272,6 @@ a.lnk,.lnk{color:inherit;background:none;border:0;padding:0;text-decoration:unde
 .icon{border:1px solid var(--line);background:var(--surface);width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:1rem;line-height:1}
 .icon[disabled]{opacity:.3}
 @media (max-width:520px){ .plan-item{grid-template-columns:22px 70px minmax(0,1fr)} .plan-item .pact{grid-column:2 / -1;flex-direction:row} }
-.mins{display:flex;width:fit-content;align-items:center;gap:.3rem;font-size:.88rem;color:var(--muted);font-weight:600;margin-top:.45rem}
-.mins input{width:4.2rem;padding:.25rem .4rem;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);text-align:center}
 .res{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem}
 .res button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:.25rem .7rem;font-size:.85rem;font-weight:600;color:var(--muted)}
 .res button[aria-pressed="true"][data-s="ok"]{background:var(--ok-bg);border-color:var(--easy);color:var(--easy)}
@@ -283,25 +296,6 @@ a.lnk,.lnk{color:inherit;background:none;border:0;padding:0;text-decoration:unde
 .radio-list small{color:var(--muted);display:block}
 .add-row{display:flex;gap:.4rem;margin-top:.5rem}
 .add-row input{flex:1;padding:.5rem .7rem;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
-
-/* Trainingsmodus */
-#dlgRun{width:100%;max-width:100%;height:100%;max-height:100%;margin:0;border-radius:0}
-.run{display:flex;flex-direction:column;height:100%;padding:calc(.8rem + env(safe-area-inset-top,0px)) 1.1rem calc(.8rem + env(safe-area-inset-bottom,0px));max-width:820px;margin:0 auto}
-.run-top{display:flex;align-items:center;gap:.8rem}
-.run-top .cnt{font-weight:700;color:var(--muted)}
-.run-top .crs{margin-right:auto;color:var(--muted);font-size:.9rem}
-.run-bar{height:5px;background:var(--surface-2);border-radius:3px;margin:.6rem 0 1rem;overflow:hidden}
-.run-bar i{display:block;height:100%;background:var(--rose)}
-.run-body{flex:1;overflow:auto;min-height:0}
-.run-body h2{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,5vw,2.4rem);margin:0 0 .4rem;line-height:1.15}
-.run-timer{display:flex;align-items:center;justify-content:center;gap:.8rem;padding:.8rem 0}
-.run-timer .time{font-family:var(--display);font-size:clamp(2.6rem,10vw,3.6rem);min-width:6ch;text-align:center;font-variant-numeric:tabular-nums}
-.run-timer .time.done{color:var(--accent)}
-.run-nav{display:grid;grid-template-columns:1fr 1.6fr;gap:.6rem}
-.run-nav .btn{padding:.9rem;font-size:1.05rem}
-.run .res{justify-content:center;margin:0 0 .8rem}
-.run .res button{padding:.45rem 1rem;font-size:.95rem}
-
 
 footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--muted);font-size:.85rem}
 .toast{position:fixed;left:50%;top:calc(1rem + env(safe-area-inset-top,0px));translate:-50% 0;background:var(--ink);color:var(--surface);padding:.6rem 1rem;border-radius:12px;z-index:20;font-weight:600;max-width:calc(100% - 2rem);opacity:0;pointer-events:none;transition:opacity .2s}
@@ -331,14 +325,14 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Figur ansehen -->
 <dialog id="dlgFigView"><div class="dlg">
-  <div class="dlg-head"><h3 id="fvTitle"></h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button class="back" data-action="close">‹ Zurück</button><h3 id="fvTitle"></h3></div>
   <div class="dlg-body" id="fvBody"></div>
   <div class="dlg-foot"><button class="btn" data-action="fv-plan">Zu Training hinzufügen</button><button class="btn primary" data-action="fv-edit">Bearbeiten</button></div>
 </div></dialog>
 
 <!-- Figur bearbeiten -->
 <dialog id="dlgFigForm"><form class="dlg" id="figForm" novalidate>
-  <div class="dlg-head"><h3 id="ffTitle">Neue Figur</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button type="button" class="back" data-action="close">‹ Zurück</button><h3 id="ffTitle">Neue Figur</h3></div>
   <div class="dlg-body">
     <div class="f"><span class="flabel">Fotos</span>
       <div class="pf-list" id="ffPhotos"></div>
@@ -366,14 +360,14 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Kombo ansehen -->
 <dialog id="dlgComboView"><div class="dlg">
-  <div class="dlg-head"><h3 id="cvTitle"></h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button class="back" data-action="close">‹ Zurück</button><h3 id="cvTitle"></h3></div>
   <div class="dlg-body" id="cvBody"></div>
   <div class="dlg-foot"><button class="btn" data-action="cv-plan">Zu Training hinzufügen</button><button class="btn primary" data-action="cv-edit">Bearbeiten</button></div>
 </div></dialog>
 
 <!-- Kombo bearbeiten -->
 <dialog id="dlgComboForm"><form class="dlg" id="comboForm" novalidate>
-  <div class="dlg-head"><h3 id="cfTitle">Neue Kombo</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button type="button" class="back" data-action="close">‹ Zurück</button><h3 id="cfTitle">Neue Kombo</h3></div>
   <div class="dlg-body">
     <label class="f"><span>Name</span><input type="text" id="cfName" autocomplete="off" placeholder="z. B. Spin-Kombo Anfänger"></label>
     <div class="f"><span class="flabel">Art</span><div class="seg" id="cfType">
@@ -398,20 +392,19 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Training ansehen -->
 <dialog id="dlgSess"><div class="dlg">
-  <div class="dlg-head"><h3 id="sdTitle"></h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button class="back" data-action="close">‹ Zurück</button><h3 id="sdTitle"></h3></div>
   <div class="dlg-body" id="sdBody"></div>
   <div class="dlg-foot" id="sdFoot">
     <button class="btn danger left" data-action="sd-delete">Löschen</button>
     <button class="btn" data-action="sd-copy">Kopieren</button>
     <button class="btn" data-action="sd-edit">Bearbeiten</button>
-    <button class="btn" data-action="sd-add">+ Hinzufügen</button>
-    <button class="btn primary" data-action="run">▶ Training starten</button>
+    <button class="btn primary" data-action="sd-add">+ Hinzufügen</button>
   </div>
 </div></dialog>
 
 <!-- Training anlegen/ändern -->
 <dialog id="dlgSessForm"><form class="dlg" id="sessForm" novalidate>
-  <div class="dlg-head"><h3 id="sfTitle">Training planen</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button type="button" class="back" data-action="close">‹ Zurück</button><h3 id="sfTitle">Training planen</h3></div>
   <div class="dlg-body">
     <div class="f"><span class="flabel">Art</span><div class="seg" id="sfKind">
       <label><input type="radio" name="skind" value="kurs" checked><span>Kurstraining</span></label>
@@ -429,9 +422,9 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
       </div>
     </div>
     <div class="f"><span class="flabel">Aufwärmen <span class="hint">(optional)</span></span>
-      <div class="two"><input type="text" id="sfWarm" placeholder="z. B. Schulter-Mobilisation" aria-label="Aufwärmen"><input type="number" id="sfWarmMin" min="0" max="120" inputmode="numeric" placeholder="Min." aria-label="Minuten Aufwärmen"></div></div>
+      <input type="text" id="sfWarm" placeholder="z. B. Schulter-Mobilisation" aria-label="Aufwärmen"></div>
     <div class="f"><span class="flabel">Cool-down <span class="hint">(optional)</span></span>
-      <div class="two"><input type="text" id="sfCool" placeholder="z. B. Dehnen" aria-label="Cool-down"><input type="number" id="sfCoolMin" min="0" max="120" inputmode="numeric" placeholder="Min." aria-label="Minuten Cool-down"></div></div>
+      <input type="text" id="sfCool" placeholder="z. B. Dehnen" aria-label="Cool-down"></div>
     <label class="f"><span>Notiz zum Training <span class="hint">(optional)</span></span><textarea id="sfNote" style="min-height:70px"></textarea></label>
     <p class="err" id="sfErr" hidden></p>
   </div>
@@ -443,7 +436,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Auswahl -->
 <dialog id="dlgPick"><div class="dlg">
-  <div class="dlg-head"><h3 id="pkTitle">Auswählen</h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button class="back" data-action="close">‹ Zurück</button><h3 id="pkTitle">Auswählen</h3></div>
   <div class="dlg-body">
     <div class="toolbar" style="margin:0">
       <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="text" id="pkQ" placeholder="Suchen" aria-label="Suchen"></div>
@@ -456,7 +449,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Zu Training hinzufügen -->
 <dialog id="dlgAssign"><form class="dlg" id="assignForm" novalidate>
-  <div class="dlg-head"><h3 id="asTitle">Zu Training hinzufügen</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button type="button" class="back" data-action="close">‹ Zurück</button><h3 id="asTitle">Zu Training hinzufügen</h3></div>
   <div class="dlg-body">
     <div class="radio-list" id="asList"></div>
     <p class="err" id="asErr" hidden></p>
@@ -466,7 +459,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Kurs -->
 <dialog id="dlgCourse"><form class="dlg" id="courseForm" novalidate>
-  <div class="dlg-head"><h3 id="coTitle">Neuer Kurs</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button type="button" class="back" data-action="close">‹ Zurück</button><h3 id="coTitle">Neuer Kurs</h3></div>
   <div class="dlg-body">
     <label class="f"><span>Name</span><input type="text" id="coName" autocomplete="off" placeholder="z. B. Anfängerkurs Donnerstag"></label>
     <label class="f"><span>Zeit und Ort <span class="hint">(optional)</span></span><input type="text" id="coInfo" autocomplete="off" placeholder="z. B. Do 18:30, Studio Lingen"></label>
@@ -486,7 +479,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Schülerin -->
 <dialog id="dlgStudent"><form class="dlg" id="studentForm" novalidate>
-  <div class="dlg-head"><h3 id="stTitle">Neue Schülerin</h3><button type="button" class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button type="button" class="back" data-action="close">‹ Zurück</button><h3 id="stTitle">Neue Schülerin</h3></div>
   <div class="dlg-body">
     <label class="f"><span>Name</span><input type="text" id="stName" autocomplete="off"></label>
     <div class="f"><span class="flabel">Kurse</span><div class="chips" id="stCourses"></div></div>
@@ -503,7 +496,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 
 <!-- Einstellungen -->
 <dialog id="dlgSettings"><div class="dlg">
-  <div class="dlg-head"><h3>Einstellungen</h3><button class="x" data-action="close" aria-label="Schließen">×</button></div>
+  <div class="dlg-head"><button class="back" data-action="close">‹ Zurück</button><h3>Einstellungen</h3></div>
   <div class="dlg-body">
     <h4 class="sec-t" style="margin-top:0">Kategorien</h4>
     <p class="muted" style="margin-top:0">Neue Kategorien kannst du hier oder direkt beim Anlegen einer Figur hinzufügen. Antippen entfernt eine Kategorie aus der Auswahl – Figuren behalten sie.</p>
@@ -515,8 +508,6 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
   </div>
 </div></dialog>
 
-<!-- Trainingsmodus -->
-<dialog id="dlgRun"><div class="run" id="runBox"></div></dialog>
 
 <!-- Bestätigen -->
 <dialog id="dlgConfirm"><div class="dlg">
@@ -528,7 +519,7 @@ footer.foot{max-width:1240px;margin:0 auto;padding:0 1.1rem 2rem;color:var(--mut
 <script>
 (() => {
 "use strict";
-const VERSION = "10.26.4";
+const VERSION = "10.26.5";
 
 /* ================= Grunddaten ================= */
 const LEVELS = [
@@ -683,6 +674,33 @@ async function dropStyled(){
     const n = {...S(), stylesRemoved: true}; delete n.photoStyle; await Store.put("settings", n); } catch(e){}
 }
 
+/* ================= Wischen zum Löschen ================= */
+const swWrap = (kind, id, inner, tag = "div", cls = "") => `<${tag} class="sw ${cls}"><button type="button" class="sw-del" data-action="swipe-del" data-kind="${kind}" data-id="${esc(id)}" tabindex="-1">${kind === "item" || kind === "step" ? "Entfernen" : "Löschen"}</button><div class="sw-main">${inner}</div></${tag}>`;
+const SW = 110; let swOpen = null, swCur = null, swSuppress = false;
+function swClose(el){ if (!el) return; const m = el.querySelector(":scope > .sw-main"); if (m) m.style.transform = ""; if (swOpen === el) swOpen = null; }
+document.addEventListener("pointerdown", e => {
+  const m = e.target.closest(".sw > .sw-main");
+  if (swOpen && !e.target.closest(".sw-del") && (!m || m.parentNode !== swOpen)) swClose(swOpen);
+  if (!m || e.button > 0 || e.target.closest("input,textarea,select")) { swCur = null; return; }
+  swCur = {el: m.parentNode, main: m, x: e.clientX, y: e.clientY, dx: 0, active: false, base: m.parentNode === swOpen ? -SW : 0, pid: e.pointerId};
+});
+document.addEventListener("pointermove", e => {
+  const c = swCur; if (!c || e.pointerId !== c.pid) return;
+  const dx = e.clientX - c.x, dy = e.clientY - c.y;
+  if (!c.active){ if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.3){ c.active = true; c.el.classList.add("drag"); } else if (Math.abs(dy) > 10){ swCur = null; return; } else return; }
+  c.dx = dx; c.main.style.transform = `translateX(${Math.max(-SW - 30, Math.min(0, c.base + dx))}px)`;
+});
+function swEnd(e){
+  const c = swCur; swCur = null; if (!c || !c.active) return;
+  c.el.classList.remove("drag"); swSuppress = true; setTimeout(() => { swSuppress = false; }, 60);
+  if (c.base + c.dx < -SW / 2.4){ c.main.style.transform = `translateX(${-SW}px)`; swOpen = c.el; } else swClose(c.el);
+}
+document.addEventListener("pointerup", swEnd); document.addEventListener("pointercancel", swEnd);
+document.addEventListener("click", e => {
+  if (swSuppress){ e.stopPropagation(); e.preventDefault(); return; }
+  const m = e.target.closest(".sw > .sw-main"); if (m && m.parentNode === swOpen){ swClose(swOpen); e.stopPropagation(); e.preventDefault(); }
+}, true);
+
 /* ================= Abgeleitete Daten ================= */
 const figs = () => Store.all("figures").sort(byName);
 const combos = () => Store.all("combos").sort(byName);
@@ -793,11 +811,11 @@ function sessRow(s, today){
   const d = dateObj(s.date); const items = liveItems(s); const objs = items.map(itemObj);
   const res = s.results || {}; const ok = items.filter(it => (res[it.id] || {}).s === "ok").length; const any = items.some(it => (res[it.id] || {}).s);
   const th = items.slice(0, 5).map(it => `<span class="t">${thumbInner(itemObj(it), it.type)}</span>`).join("");
-  return `<button class="sess${s.date === today ? " today" : ""}" data-action="open-sess" data-id="${esc(s.id)}">
+  return swWrap("sess", s.id, `<button class="sess${s.date === today ? " today" : ""}" data-action="open-sess" data-id="${esc(s.id)}">
     <span class="date"><b>${d.getDate()}</b><span>${d.toLocaleDateString("de-DE", {weekday:"short"})}${s.date === today ? " · heute" : ""}</span>${s.time ? `<span>${esc(s.time)}</span>` : ""}</span>
     <span>${isPriv(s) ? `<span class="tag priv">Privat</span> ` : ""}<span class="course">${esc(sessTitle(s))}</span>${any ? `<span class="prog">${ok}/${items.length} geschafft</span>` : ""}<br>
       <span class="sub-t">${items.length ? esc(objs.slice(0, 3).map(o => o.name).join(", ")) + (items.length > 3 ? " …" : "") : "Noch nichts eingeplant"}</span></span>
-    <span class="thumbs" aria-hidden="true">${th}</span></button>`;
+    <span class="thumbs" aria-hidden="true">${th}</span></button>`);
 }
 function renderTrain(){
   const today = todayISO(); const all = sessionsSorted().filter(s => ui.tkind === "alle" || (ui.tkind === "privat") === isPriv(s));
@@ -812,22 +830,23 @@ function renderTrain(){
     if (past.length){ html += `<details class="past"><summary>Vergangene Trainings (${past.length})</summary>`; let pm = "";
       for (const s of past){ const mm = fmtMonth(s.date); if (mm !== pm){ html += `<h3 class="month">${mm}</h3>`; pm = mm; } html += sessRow(s, today); } html += `</details>`; }
   }
-  $("#app").innerHTML = html; renderSelbar(); hydrate();
+  if (all.length) html += `<p class="swipe-hint">Zum Löschen nach links wischen.</p>`;
+  $("#app").innerHTML = html; renderSelbar(); hydrate(); swOpen = null;
 }
 
 function renderKurse(){
   const cs = courses(), ss = students(); const today = todayISO();
   let html = `<div class="head"><h2>Kurse</h2><button class="btn primary" data-action="new-course">+ Neuer Kurs</button></div>`;
   html += cs.length ? `<div class="course-grid">${cs.map(c => { const sess = Store.all("sessions").filter(s => s.courseId === c.id); const next = sess.filter(s => s.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
-      return `<button class="course-card" data-action="open-course" data-id="${esc(c.id)}"><b>${esc(c.name)}</b>${c.info ? `<div class="sub-t">${esc(c.info)}</div>` : ""}
-        <div class="sub-t">${(c.studentIds || []).filter(id => Store.get("students", id)).length} Schülerinnen · ${sess.length} Trainings${next ? ` · nächstes: ${esc(fmtShort(next.date))}` : ""}</div></button>`; }).join("")}</div>`
+      return swWrap("course", c.id, `<button class="course-card" data-action="open-course" data-id="${esc(c.id)}"><b>${esc(c.name)}</b>${c.info ? `<div class="sub-t">${esc(c.info)}</div>` : ""}
+        <div class="sub-t">${(c.studentIds || []).filter(id => Store.get("students", id)).length} Schülerinnen · ${sess.length} Trainings${next ? ` · nächstes: ${esc(fmtShort(next.date))}` : ""}</div></button>`); }).join("")}</div>`
     : `<div class="empty"><p>Lege deine Kurse an. Sie erscheinen dann beim Planen eines Trainings als Auswahl.</p></div>`;
   html += `<div class="head sub"><h2>Schülerinnen</h2><button class="btn primary" data-action="new-student">+ Neue Schülerin</button></div>`;
-  html += ss.length ? ss.map(st => `<button class="row" data-action="open-student" data-id="${esc(st.id)}"><span class="avatar">${initials(st.name)}</span>
+  html += ss.length ? ss.map(st => swWrap("student", st.id, `<button class="row" data-action="open-student" data-id="${esc(st.id)}"><span class="avatar">${initials(st.name)}</span>
       <span class="grow"><b>${esc(st.name)}</b><span class="sub-t">${esc(studentCourses(st.id).map(c => c.name).join(", ") || (Store.all("sessions").some(s => isPriv(s) && (s.studentIds || []).includes(st.id)) ? "Privatstunden" : "Keinem Kurs zugeordnet"))}</span></span>
-      <span class="sub-t">kann ${canList(st.id).size}</span></button>`).join("")
+      <span class="sub-t">kann ${canList(st.id).size}</span></button>`)).join("") + `<p class="swipe-hint">Zum Löschen nach links wischen.</p>`
     : `<div class="empty"><p>Noch keine Schülerinnen angelegt. Sie können einem Kurs angehören oder nur Privatstunden haben. Im Training hältst du dann fest, wer welche Figur schon geschafft hat.</p></div>`;
-  $("#app").innerHTML = html; renderSelbar();
+  $("#app").innerHTML = html; renderSelbar(); swOpen = null;
 }
 
 function render(){
@@ -989,10 +1008,11 @@ function openComboForm(id){
 }
 function renderCFSteps(){
   $("#cfSteps").innerHTML = cf.steps.length ? `<ol class="steps">${cf.steps.map((st, i) => { const f = Store.get("figures", st.figId);
-    return `<li><div class="step"><span class="si">${thumbInner(f)}</span><b>${i + 1}. ${esc(f.name)}</b>
-      <span style="display:flex;gap:.25rem"><button type="button" class="icon" data-action="cf-up" data-i="${i}" ${i ? "" : "disabled"} aria-label="Nach oben">↑</button><button type="button" class="icon" data-action="cf-down" data-i="${i}" ${i < cf.steps.length - 1 ? "" : "disabled"} aria-label="Nach unten">↓</button><button type="button" class="icon" data-action="cf-del" data-i="${i}" aria-label="Entfernen">×</button></span></div>
+    return `<li>${swWrap("step", i, `<div class="step"><span class="si">${thumbInner(f)}</span><b>${i + 1}. ${esc(f.name)}</b>
+      <span style="display:flex;gap:.25rem"><button type="button" class="icon" data-action="cf-up" data-i="${i}" ${i ? "" : "disabled"} aria-label="Nach oben">↑</button><button type="button" class="icon" data-action="cf-down" data-i="${i}" ${i < cf.steps.length - 1 ? "" : "disabled"} aria-label="Nach unten">↓</button></span></div>`)}
       ${i < cf.steps.length - 1 ? `<div class="trans"><input type="text" data-ti="${i}" value="${esc(st.trans || "")}" placeholder="Übergang zur nächsten Figur (optional)" aria-label="Übergang nach ${esc(f.name)}"></div>` : ""}</li>`; }).join("")}</ol>`
     : `<p class="hint">Noch keine Figuren. Füge sie in der Reihenfolge hinzu, in der sie getanzt werden.</p>`;
+  if (cf.steps.length) $("#cfSteps").insertAdjacentHTML("beforeend", `<p class="swipe-hint">Zum Entfernen nach links wischen.</p>`);
   hydrate($("#cfSteps"));
 }
 $("#cfSteps").addEventListener("input", e => { const i = e.target.dataset.ti; if (i != null) cf.steps[+i].trans = e.target.value; });
@@ -1020,32 +1040,30 @@ function fillSession(){
   const cStudents = course ? (course.studentIds || []).map(id => Store.get("students", id)).filter(Boolean).sort(byName) : [];
   const present = (s.present || []).filter(id => Store.get("students", id));
   const whoPool = isPriv(s) ? sessStudents(s) : present.length ? present.map(id => Store.get("students", id)).sort(byName) : cStudents;
-  const total = (+((s.warm || {}).min) || 0) + (+((s.cool || {}).min) || 0) + items.reduce((a, it) => a + (+it.min || 0), 0);
-  $("#sdTitle").innerHTML = `${esc(isPriv(s) ? s.ptype || "Privatstunde" : sessTitle(s))}<small>${esc(fmtLong(s.date) + timeTxt(s))}${total ? ` · Ablauf ${total} Min.` : ""}</small>`;
+  $("#sdTitle").innerHTML = `${esc(isPriv(s) ? s.ptype || "Privatstunde" : sessTitle(s))}<small>${esc(fmtLong(s.date) + timeTxt(s))}</small>`;
   let html = s.note ? `<div class="sess-note">${esc(s.note)}</div>` : "";
   if (isPriv(s)) html += `<div class="present"><span class="flabel">Schülerinnen</span>${whoPool.length ? `<div class="chips">${whoPool.map(st => `<button class="chip" data-action="open-student" data-id="${esc(st.id)}" aria-pressed="true">${esc(st.name)}</button>`).join("")}</div>` : `<p class="muted" style="margin:0">Noch niemand eingetragen – über „Bearbeiten“ hinzufügen.</p>`}</div>`;
   else if (cStudents.length) html += `<div class="present"><span class="flabel">Anwesend (${present.length}/${cStudents.length})</span><div class="chips">${cStudents.map(st => `<button class="chip" data-action="sd-present" data-sid="${esc(st.id)}" aria-pressed="${present.includes(st.id)}">${esc(st.name)}</button>`).join("")}</div></div>`;
-  if (s.warm && (s.warm.text || s.warm.min)) html += `<div class="block"><b>Aufwärmen${s.warm.min ? ` · ${+s.warm.min} Min.` : ""}</b>${s.warm.text ? `<p>${esc(s.warm.text)}</p>` : ""}</div>`;
+  if (s.warm && s.warm.text) html += `<div class="block"><b>Aufwärmen</b>${s.warm.text ? `<p>${esc(s.warm.text)}</p>` : ""}</div>`;
   if (!items.length) html += `<div class="empty" style="margin:.6rem 0"><p>Für dieses Training ist noch nichts eingeplant.</p><button class="btn primary" data-action="sd-add">+ Figuren oder Kombos hinzufügen</button></div>`;
   else html += `<ol class="plan-list">${items.map((it, i) => { const o = itemObj(it); const l = LV[o.level] || LEVELS[0]; const r = (s.results || {})[it.id] || {};
     const isC = it.type === "combo"; const miss = isC ? [] : prereqMissing(s, o, i);
     const sub = isC ? (o.steps || []).map(st => Store.get("figures", st.figId)).filter(Boolean).map(f => f.name).join(" › ") : o.notes;
-    return `<li class="plan-item">
+    return swWrap("item", it.id, `<div class="plan-item">
       <button class="pimg" data-action="${isC ? "combo" : "fig"}" data-id="${esc(o.id)}" aria-label="${esc(o.name)} ansehen">${thumbInner(o, it.type)}</button>
       <div><div class="pname">${esc(o.name)} <span style="color:${l.c}">${lvlMark(o.level)}</span></div>
         <span class="tag">${esc(isC ? o.type || "Kombo" : o.category || "")}</span> <span class="tag" style="color:${l.c}">${l.label}</span>
         ${sub ? `<div class="pnotes">${esc(sub)}</div>` : ""}
         ${miss.length ? `<div class="warn">Voraussetzung in diesem Kurs noch nicht geschafft: ${esc(miss.join(", "))}</div>` : ""}
-        <label class="mins">Dauer <input type="number" min="0" max="180" inputmode="numeric" data-min="${esc(it.id)}" value="${it.min ? +it.min : ""}" placeholder="–"> Min.</label>
         <div class="res" role="group" aria-label="Ergebnis">${Object.entries(STATUS).map(([k, t]) => `<button data-action="sd-res" data-id="${esc(it.id)}" data-s="${k}" aria-pressed="${r.s === k}">${t}</button>`).join("")}</div>
         ${whoPool.length ? `<div class="who"><span>Geschafft haben:</span>${whoPool.map(st => `<button class="chip" data-action="sd-who" data-id="${esc(it.id)}" data-sid="${esc(st.id)}" aria-pressed="${(r.who || []).includes(st.id)}">${esc(st.name)}</button>`).join("")}</div>` : ""}
         <textarea class="res-note" data-note="${esc(it.id)}" rows="1" placeholder="Notiz, z. B. woran es noch hakt" aria-label="Notiz zu ${esc(o.name)}">${esc(r.n || "")}</textarea></div>
-      <div class="pact"><button class="icon" data-action="sd-up" data-i="${i}" ${i ? "" : "disabled"} aria-label="Nach oben">↑</button><button class="icon" data-action="sd-down" data-i="${i}" ${i < items.length - 1 ? "" : "disabled"} aria-label="Nach unten">↓</button><button class="icon" data-action="sd-remove" data-id="${esc(it.id)}" aria-label="Aus Training entfernen">×</button></div></li>`; }).join("")}</ol>`;
-  if (s.cool && (s.cool.text || s.cool.min)) html += `<div class="block"><b>Cool-down${s.cool.min ? ` · ${+s.cool.min} Min.` : ""}</b>${s.cool.text ? `<p>${esc(s.cool.text)}</p>` : ""}</div>`;
+      <div class="pact"><button class="icon" data-action="sd-up" data-i="${i}" ${i ? "" : "disabled"} aria-label="Nach oben">↑</button><button class="icon" data-action="sd-down" data-i="${i}" ${i < items.length - 1 ? "" : "disabled"} aria-label="Nach unten">↓</button></div></div>`, "li"); }).join("")}</ol><p class="swipe-hint">Zum Entfernen nach links wischen.</p>`;
+  if (s.cool && s.cool.text) html += `<div class="block"><b>Cool-down</b>${s.cool.text ? `<p>${esc(s.cool.text)}</p>` : ""}</div>`;
   html += `<div class="review"><h4 class="sec-t">Rückblick nach dem Training</h4><textarea id="sdReview" placeholder="Wie lief die Stunde? Was nehme ich mir fürs nächste Mal vor?">${esc(s.review || "")}</textarea></div>`;
-  const keep = document.activeElement && $("#sdBody").contains(document.activeElement) ? document.activeElement.dataset.note || document.activeElement.dataset.min || document.activeElement.id : null;
+  const keep = document.activeElement && $("#sdBody").contains(document.activeElement) ? document.activeElement.dataset.note || document.activeElement.id : null;
   $("#sdBody").innerHTML = html; hydrate($("#sdBody"));
-  if (keep){ const el = $("#sdBody").querySelector(`[data-note="${CSS.escape(keep)}"],[data-min="${CSS.escape(keep)}"],#${CSS.escape(keep)}`); if (el && el.tagName !== "BUTTON") el.focus(); }
+  if (keep){ const el = $("#sdBody").querySelector(`[data-note="${CSS.escape(keep)}"],#${CSS.escape(keep)}`); if (el && el.tagName !== "BUTTON") el.focus(); }
 }
 function openSession(id){ ui.sessId = id; fillSession(); openDlg("#dlgSess"); }
 async function patchSession(fn, rerender = true){
@@ -1057,7 +1075,6 @@ function setRes(s, id, key, val){ const r = {...(s.results[id] || {})}; if (val 
 $("#sdBody").addEventListener("change", e => {
   const t = e.target;
   if (t.dataset.note) patchSession(s => setRes(s, t.dataset.note, "n", t.value.trim()), false);
-  else if (t.dataset.min) patchSession(s => { const it = s.items.find(x => x.id === t.dataset.min); if (it) it.min = Math.max(0, Math.min(180, parseInt(t.value, 10) || 0)); return s; });
   else if (t.id === "sdReview") patchSession(s => ({...s, review: t.value.trim()}), false);
 });
 
@@ -1074,8 +1091,8 @@ function openSessForm(id, copyFrom, opts = {}){
   renderSfStudents(); syncKind();
   $("#sfDate").value = s ? s.date : todayISO();
   courseSelect("#sfCourse", src ? src.courseId : (courses()[0] || {}).id); $("#sfNewWrap").hidden = $("#sfCourse").value !== "__new"; $("#sfNew").value = "";
-  $("#sfWarm").value = src && src.warm ? src.warm.text || "" : ""; $("#sfWarmMin").value = src && src.warm && src.warm.min ? src.warm.min : "";
-  $("#sfCool").value = src && src.cool ? src.cool.text || "" : ""; $("#sfCoolMin").value = src && src.cool && src.cool.min ? src.cool.min : "";
+  $("#sfWarm").value = src && src.warm ? src.warm.text || "" : "";
+  $("#sfCool").value = src && src.cool ? src.cool.text || "" : "";
   $("#sfNote").value = src ? src.note || "" : ""; showErr("#sfErr", ""); openDlg("#dlgSessForm");
 }
 function syncKind(){ const p = radioVal("#sfKind") === "privat"; $("#sfKursBox").hidden = p; $("#sfPrivBox").hidden = !p; }
@@ -1100,7 +1117,7 @@ $("#sessForm").addEventListener("submit", async e => {
   const kind = radioVal("#sfKind") || "kurs"; let courseId = null;
   if (kind === "kurs"){ courseId = await resolveCourse("#sfCourse", "#sfNew"); if (!courseId){ showErr("#sfErr", "Bitte einen Kurs wählen oder einen Namen für den neuen Kurs eingeben."); return; } }
   const extra = {kind, time: $("#sfTime").value || "", courseId, ptype: kind === "privat" ? $("#sfPtype").value : "", studentIds: kind === "privat" ? [...sf.students] : []};
-  const warm = {text: $("#sfWarm").value.trim(), min: parseInt($("#sfWarmMin").value, 10) || 0}, cool = {text: $("#sfCool").value.trim(), min: parseInt($("#sfCoolMin").value, 10) || 0};
+  const warm = {text: $("#sfWarm").value.trim()}, cool = {text: $("#sfCool").value.trim()};
   const old = sf.edit ? Store.get("sessions", sf.edit) : null; const src = sf.copy ? Store.get("sessions", sf.copy) : null;
   const s = old ? {...old, ...extra, date, warm, cool, note: $("#sfNote").value.trim()}
     : {id: uid(), ...extra, date, warm, cool, note: $("#sfNote").value.trim(), items: src ? liveItems(src).map(it => ({...it})) : (sf.pending || []).map(it => ({type: it.type, id: it.id, min: 0})), results: {}, present: [], created: Date.now()};
@@ -1210,12 +1227,13 @@ $("#courseForm").addEventListener("submit", async e => {
   const c = {...(old || {}), id: old ? old.id : uid(), name, info: $("#coInfo").value.trim(), studentIds: [...co.sel]};
   try { await Store.put("courses", c); $("#dlgCourse").close(); render(); toast(old ? "Kurs gespeichert" : "Kurs angelegt"); } catch(err){ saveError(); }
 });
-$("#coDelete").addEventListener("click", async () => {
-  const c = Store.get("courses", co.id); if (!c) return;
+$("#coDelete").addEventListener("click", () => deleteCourse(co.id));
+async function deleteCourse(id){
+  const c = Store.get("courses", id); if (!c) return;
   if (!await confirmBox("Kurs löschen?", `„${c.name}“ wird gelöscht. Geplante Trainings bleiben erhalten und behalten den Kursnamen.`)) return;
   try { for (const s of Store.all("sessions")) if (s.courseId === c.id){ const n = {...s, course: c.name}; delete n.courseId; await Store.put("sessions", n); }
     await Store.del("courses", c.id); $("#dlgCourse").close(); render(); toast("Kurs gelöscht"); } catch(err){ saveError(); }
-});
+}
 let stf = null;
 function openStudent(id){
   const st = id ? Store.get("students", id) : null; stf = {id: st ? st.id : null, sel: new Set(st ? studentCourses(st.id).map(c => c.id) : (ui.courseId ? [ui.courseId] : []))};
@@ -1239,8 +1257,9 @@ $("#studentForm").addEventListener("submit", async e => {
     $("#dlgStudent").close(); render(); toast(old ? "Gespeichert" : `${st.name} angelegt`);
   } catch(err){ saveError(); }
 });
-$("#stDelete").addEventListener("click", async () => {
-  const st = Store.get("students", stf.id); if (!st) return;
+$("#stDelete").addEventListener("click", () => deleteStudent(stf.id));
+async function deleteStudent(id){
+  const st = Store.get("students", id); if (!st) return;
   if (!await confirmBox("Schülerin löschen?", `${st.name} wird aus allen Kursen und Trainingseinträgen entfernt.`)) return;
   try { for (const c of courses()) if ((c.studentIds || []).includes(st.id)) await Store.put("courses", {...c, studentIds: c.studentIds.filter(x => x !== st.id)});
     for (const s of Store.all("sessions")){ let ch = false; const n = {...s, present: (s.present || []).filter(x => x !== st.id), studentIds: (s.studentIds || []).filter(x => x !== st.id), results: JSON.parse(JSON.stringify(s.results || {}))};
@@ -1249,7 +1268,12 @@ $("#stDelete").addEventListener("click", async () => {
       if (ch) await Store.put("sessions", n); }
     await Store.del("students", st.id); $("#dlgStudent").close(); render(); toast("Gelöscht");
   } catch(err){ saveError(); }
-});
+}
+async function deleteSession(id){
+  const s = Store.get("sessions", id); if (!s) return;
+  if (!await confirmBox(isPriv(s) ? "Privatstunde löschen?" : "Training löschen?", `${sessTitle(s)} am ${fmtLong(s.date)} wird gelöscht. Figuren und Kombos bleiben erhalten.`)) return;
+  try { await Store.del("sessions", s.id); $("#dlgSess").close(); render(); toast("Gelöscht"); } catch(err){ saveError(); }
+}
 
 /* ================= Einstellungen & Sicherung ================= */
 function openSettings(){ renderCats(); openDlg("#dlgSettings"); }
@@ -1281,54 +1305,6 @@ $("#importFile").addEventListener("change", async e => {
     await migrate(); clearPhotoCache(); render(); toast("Sicherung importiert");
   } catch(err){ toast(err && err.message === "format" ? "Diese Datei ist keine PolePlaner-Sicherung." : "Import hat nicht geklappt."); }
 });
-
-/* ================= Trainingsmodus ================= */
-const run = {steps: [], i: 0, running: false, startedAt: 0, elapsed: 0, t: null, rang: false, wake: null};
-let actx = null;
-function beep(){
-  try { if (actx){ const t = actx.currentTime; [0, .35, .7].forEach(o => { const os = actx.createOscillator(), g = actx.createGain(); os.frequency.value = 880; os.connect(g); g.connect(actx.destination);
-    g.gain.setValueAtTime(.0001, t + o); g.gain.exponentialRampToValueAtTime(.35, t + o + .02); g.gain.exponentialRampToValueAtTime(.0001, t + o + .28); os.start(t + o); os.stop(t + o + .3); }); } } catch(e){}
-  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch(e){}
-}
-async function wakeOn(){ try { if ("wakeLock" in navigator) run.wake = await navigator.wakeLock.request("screen"); } catch(e){} }
-function wakeOff(){ try { run.wake && run.wake.release(); } catch(e){} run.wake = null; }
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && $("#dlgRun").open) wakeOn(); });
-function startRun(){
-  const s = Store.get("sessions", ui.sessId); if (!s) return; const st = [];
-  if (s.warm && (s.warm.text || s.warm.min)) st.push({kind: "warm", title: "Aufwärmen", text: s.warm.text, min: +s.warm.min || 0});
-  liveItems(s).forEach(it => st.push({kind: it.type, id: it.id, min: +it.min || 0}));
-  if (s.cool && (s.cool.text || s.cool.min)) st.push({kind: "cool", title: "Cool-down", text: s.cool.text, min: +s.cool.min || 0});
-  if (!st.length){ toast("Füge zuerst Figuren oder Kombos hinzu."); return; }
-  run.steps = st; run.i = 0; resetTimer(); openDlg("#dlgRun"); renderRun(); wakeOn();
-}
-function resetTimer(){ clearInterval(run.t); run.running = false; run.elapsed = 0; run.rang = false; }
-const mmss = sec => { sec = Math.max(0, Math.round(sec)); return String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0"); };
-function tick(){
-  const step = run.steps[run.i]; const el = run.elapsed + (run.running ? (Date.now() - run.startedAt) / 1000 : 0); const dur = step.min * 60;
-  const t = $("#runTime"); if (!t) return;
-  if (dur){ const rem = dur - el; t.textContent = rem > 0 ? mmss(rem) : "Zeit!"; t.classList.toggle("done", rem <= 0);
-    if (rem <= 0 && !run.rang){ run.rang = true; beep(); run.elapsed = dur; run.running = false; clearInterval(run.t); const b = $("#runToggle"); if (b) b.textContent = "Start"; } }
-  else t.textContent = mmss(el);
-}
-function renderRun(){
-  const s = Store.get("sessions", ui.sessId); const step = run.steps[run.i]; const n = run.steps.length; let body = "";
-  if (step.kind === "warm" || step.kind === "cool") body = `<h2>${step.title}</h2>${step.text ? `<div class="notes" style="font-size:1.15rem">${esc(step.text)}</div>` : ""}`;
-  else if (step.kind === "fig"){ const f = Store.get("figures", step.id); const r = ((s.results || {})[f.id] || {});
-    body = `<h2>${esc(f.name)}</h2><div class="meta" style="margin-top:0;color:${(LV[f.level] || LEVELS[0]).c}">${lvlMark(f.level)} ${(LV[f.level] || LEVELS[0]).label}<span class="tag" style="margin:0">${esc(f.category || "")}</span></div>
-      ${f.photos.length ? `<div class="gallery">${f.photos.map(p => `<figure><div class="gi"><img data-pid="${esc(p.id)}" alt=""></div><figcaption>${esc(p.label)}</figcaption></figure>`).join("")}</div>` : ""}
-      ${f.notes ? `<div class="notes">${esc(f.notes)}</div>` : ""}${r.n ? `<div class="sess-note">${esc(r.n)}</div>` : ""}`; }
-  else { const c = Store.get("combos", step.id); body = `<h2>${esc(c.name)}</h2>${c.music ? `<p class="muted">♪ ${esc(isLink(c.music) ? "Musik-Link in der Kombo" : c.music)}</p>` : ""}${stepsView((c.steps || []).filter(x => Store.get("figures", x.figId)))}${c.notes ? `<div class="notes">${esc(c.notes)}</div>` : ""}`; }
-  const r = step.kind === "fig" || step.kind === "combo" ? ((s.results || {})[step.id] || {}) : null;
-  $("#runBox").innerHTML = `<div class="run-top"><span class="cnt">${run.i + 1} / ${n}</span><span class="crs">${esc(sessTitle(s))} · ${esc(fmtShort(s.date))}</span><button class="btn small" data-action="run-close">Beenden</button></div>
-    <div class="run-bar"><i style="width:${Math.round(((run.i + 1) / n) * 100)}%"></i></div>
-    <div class="run-body">${body}</div>
-    <div class="run-timer"><span class="time" id="runTime">${step.min ? mmss(step.min * 60) : "00:00"}</span><button class="btn primary" id="runToggle" data-action="run-toggle">Start</button><button class="btn ghost" data-action="run-reset" aria-label="Zeit zurücksetzen">↺</button></div>
-    ${r ? `<div class="res" role="group" aria-label="Ergebnis">${Object.entries(STATUS).map(([k, t]) => `<button data-action="run-res" data-id="${esc(step.id)}" data-s="${k}" aria-pressed="${r.s === k}">${t}</button>`).join("")}</div>` : ""}
-    <div class="run-nav"><button class="btn" data-action="run-prev" ${run.i ? "" : "disabled"}>‹ Zurück</button><button class="btn primary" data-action="run-next">${run.i < n - 1 ? "Weiter ›" : "Training beenden"}</button></div>`;
-  hydrate($("#runBox"));
-}
-function closeRun(){ resetTimer(); wakeOff(); $("#dlgRun").close(); fillSession(); }
-$("#dlgRun").addEventListener("close", () => { resetTimer(); wakeOff(); });
 
 /* ================= Klicks ================= */
 document.addEventListener("click", async e => {
@@ -1362,7 +1338,6 @@ document.addEventListener("click", async e => {
     case "cf-add": openPicker("combo"); break;
     case "cf-up": { const i = +el.dataset.i; [cf.steps[i-1], cf.steps[i]] = [cf.steps[i], cf.steps[i-1]]; renderCFSteps(); break; }
     case "cf-down": { const i = +el.dataset.i; [cf.steps[i+1], cf.steps[i]] = [cf.steps[i], cf.steps[i+1]]; renderCFSteps(); break; }
-    case "cf-del": cf.steps.splice(+el.dataset.i, 1); renderCFSteps(); break;
     case "new-sess": openSessForm(null, null, {kind: "kurs"}); break;
     case "new-priv": openSessForm(null, null, {kind: "privat"}); break;
     case "t-kind": ui.tkind = el.dataset.v; renderTrain(); break;
@@ -1372,30 +1347,24 @@ document.addEventListener("click", async e => {
     case "sd-edit": openSessForm(ui.sessId); break;
     case "sd-copy": openSessForm(null, ui.sessId); break;
     case "sd-add": openPicker("session"); break;
-    case "sd-delete": { const s = Store.get("sessions", ui.sessId); if (!s) break;
-      if (!await confirmBox("Training löschen?", `${sessTitle(s)} am ${fmtLong(s.date)} wird gelöscht. Figuren und Kombos bleiben erhalten.`)) break;
-      try { await Store.del("sessions", s.id); $("#dlgSess").close(); render(); toast("Training gelöscht"); } catch(err){ saveError(); } break; }
+    case "sd-delete": deleteSession(ui.sessId); break;
+    case "swipe-del": { const k = el.dataset.kind; swClose(el.closest(".sw"));
+      if (k === "item") patchSession(s => { s.items = s.items.filter(x => x.id !== id); return s; });
+      else if (k === "step"){ cf.steps.splice(+id, 1); renderCFSteps(); }
+      else if (k === "sess") deleteSession(id);
+      else if (k === "student") deleteStudent(id);
+      else if (k === "course") deleteCourse(id);
+      break; }
     case "sd-up": { const i = +el.dataset.i; patchSession(s => { [s.items[i-1], s.items[i]] = [s.items[i], s.items[i-1]]; return s; }); break; }
     case "sd-down": { const i = +el.dataset.i; patchSession(s => { [s.items[i+1], s.items[i]] = [s.items[i], s.items[i+1]]; return s; }); break; }
-    case "sd-remove": patchSession(s => { s.items = s.items.filter(x => x.id !== id); return s; }); break;
-    case "sd-res": case "run-res": {
+    case "sd-res": {
       const note = document.querySelector(`[data-note="${CSS.escape(id)}"]`);
       await patchSession(s => { if (note) setRes(s, id, "n", note.value.trim()); const cur = (s.results[id] || {}).s; return setRes(s, id, "s", cur === el.dataset.s ? "" : el.dataset.s); });
-      if (a === "run-res") renderRun(); break; }
+      break; }
     case "sd-who": { const sid = el.dataset.sid; const note = document.querySelector(`[data-note="${CSS.escape(id)}"]`);
       patchSession(s => { if (note) setRes(s, id, "n", note.value.trim()); const w = new Set((s.results[id] || {}).who || []); w.has(sid) ? w.delete(sid) : w.add(sid);
         setRes(s, id, "who", [...w]); if (w.size && !(s.results[id] || {}).s) setRes(s, id, "s", "ok"); return s; }); break; }
     case "sd-present": { const sid = el.dataset.sid; patchSession(s => { s.present = s.present.includes(sid) ? s.present.filter(x => x !== sid) : [...s.present, sid]; return s; }); break; }
-    case "run": startRun(); break;
-    case "run-close": closeRun(); break;
-    case "run-toggle":
-      try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume && actx.resume(); } catch(err){}
-      if (run.running){ run.elapsed += (Date.now() - run.startedAt) / 1000; run.running = false; clearInterval(run.t); el.textContent = "Weiter"; }
-      else { if (run.rang){ run.elapsed = 0; run.rang = false; } run.startedAt = Date.now(); run.running = true; run.t = setInterval(tick, 250); el.textContent = "Pause"; }
-      tick(); break;
-    case "run-reset": resetTimer(); renderRun(); break;
-    case "run-prev": if (run.i > 0){ run.i--; resetTimer(); renderRun(); } break;
-    case "run-next": if (run.i < run.steps.length - 1){ run.i++; resetTimer(); renderRun(); } else { closeRun(); toast("Training beendet – trag gern noch einen Rückblick ein."); } break;
     case "pk-tab": pk.tab = el.dataset.v; renderPicker(); break;
     case "pk-level": pk.level = el.dataset.v; renderPicker(); break;
     case "pk-new": pk.onlyNew = !pk.onlyNew; renderPicker(); break;
@@ -1414,7 +1383,7 @@ document.addEventListener("click", async e => {
   }
 });
 $("#setNewCat").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); $("[data-action=cat-add]").click(); } });
-document.querySelectorAll("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d && d.id !== "dlgRun") d.close(); }));
+document.querySelectorAll("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
 
 /* ================= Start ================= */
 (async () => {
