@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pole-Repertoire</title>
+<title>PolePlaner</title>
 <meta name="theme-color" content="#A3214F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Pole">
+<meta name="apple-mobile-web-app-title" content="PolePlaner">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -214,7 +214,7 @@ footer.foot .sp{margin-right:auto}
 <body>
 <header class="top">
   <div class="top-inner">
-    <div class="brand"><div class="pole" aria-hidden="true"></div><h1>Pole-Repertoire</h1></div>
+    <div class="brand"><div class="pole" aria-hidden="true"></div><h1>PolePlaner</h1></div>
     <nav class="tabs" role="tablist" aria-label="Bereiche">
       <button role="tab" id="tab-rep" aria-selected="true" data-action="tab" data-tab="rep">Repertoire</button>
       <button role="tab" id="tab-train" aria-selected="false" data-action="tab" data-tab="train">Trainingsplanung</button>
@@ -808,7 +808,7 @@ $("#assignForm").addEventListener("submit", async e => {
 /* ---------- Sicherung ---------- */
 async function doExport(){
   const data = JSON.stringify({app:"pole-repertoire", version:1, exported:new Date().toISOString(), figures:[...Store.figures.values()], sessions:[...Store.sessions.values()]});
-  const filename = `pole-repertoire-${todayISO()}.json`;
+  const filename = `poleplaner-sicherung-${todayISO()}.json`;
   if (Store.downloads){
     try { await Store.downloads.save({filename, data}); } catch(e){ if (e && e.code !== "cancelled") toast("Export wurde nicht gespeichert."); }
     return;
@@ -828,7 +828,7 @@ $("#importFile").addEventListener("change", async e => {
     for (const f of d.figures || []) if (f && f.id && f.name) await Store.saveFigure(f);
     for (const s of d.sessions || []) if (s && s.id && s.date) await Store.saveSession(s);
     render(); toast("Sicherung importiert");
-  } catch(err){ toast(err && err.message === "format" ? "Diese Datei ist keine Sicherung des Pole-Repertoires." : "Import hat nicht geklappt."); }
+  } catch(err){ toast(err && err.message === "format" ? "Diese Datei ist keine Sicherung des PolePlaners." : "Import hat nicht geklappt."); }
 });
 
 /* ---------- Klicks ---------- */

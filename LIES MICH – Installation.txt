@@ -1,14 +1,14 @@
-POLE-REPERTOIRE – App aufs iPhone bringen (einmalig, ca. 10 Minuten)
+POLEPLANER – App aufs iPhone bringen (einmalig, ca. 10 Minuten)
 
 Genau wie bei Kraftwerk über GitHub Pages:
 
 1. Auf github.com einloggen.
-2. Oben rechts „+“ → „New repository“ → Name z. B. pole-repertoire → „Public“ → „Create repository“.
+2. Oben rechts „+“ → „New repository“ → Name z. B. poleplaner → „Public“ → „Create repository“.
 3. „uploading an existing file“ anklicken und ALLE Dateien aus diesem Ordner
    hineinziehen (index.html, sw.js, manifest.webmanifest, icon-180.png, icon-192.png,
    icon-512.png) → „Commit changes“.
 4. „Settings“ → „Pages“ → bei „Branch“ „main“ wählen → „Save“.
-   Nach 1–2 Minuten steht dort die Adresse, z. B. https://DEINNAME.github.io/pole-repertoire/
+   Nach 1–2 Minuten steht dort die Adresse, z. B. https://DEINNAME.github.io/poleplaner/
 5. Auf dem iPhone deiner Frau die Adresse in Safari öffnen → Teilen-Symbol → „Zum Home-Bildschirm“.
 6. Die App einmal mit Internet vom Home-Bildschirm starten. Ab dann läuft sie auch offline.
 
